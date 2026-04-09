@@ -482,3 +482,57 @@ refactor(admin): regroup sidebar sections for orders, users, and content
 ```
 style(theme): switch primary brand color from pink to green
 ```
+
+---
+
+## Task: Tạo trang đăng nhập Admin
+
+### Ngày: 2026-04-09
+
+### Vấn đề ban đầu:
+- Chưa có hệ thống xác thực cho trang admin.
+
+### Công việc đã làm:
+
+1. **Cài đặt NextAuth.js beta**
+   - `next-auth@beta` (v5), `bcryptjs`, `@types/bcryptjs`.
+
+2. **Cấu hình NextAuth với Credentials provider**
+   - Tạo `src/lib/auth.ts`: đăng nhập bằng email/password, kiểm tra `isAdmin`.
+   - Tạo `types/next-auth.d.ts`: khai báo type mở rộng cho Session/User/JWT (thêm `id`, `isAdmin`).
+   - Redirect về `/admin/login` nếu chưa xác thực.
+
+3. **Tạo API route cho NextAuth**
+   - Tạo `app/api/auth/[...nextauth]/route.ts`.
+
+4. **Tạo trang đăng nhập admin**
+   - Tạo `app/admin/login/page.tsx`: giao diện đăng nhập với email/password, toggle show/hide password, error handling, loading state.
+   - Tạo `app/admin/login/layout.tsx`: layout đơn giản không có sidebar.
+
+5. **Bảo vệ admin routes bằng middleware**
+   - Tạo `src/middleware.ts`: export `auth` để tự động bảo vệ tất cả route `/admin/*`.
+   - Chỉ user có `isAdmin = true` mới được truy cập.
+
+6. **Cập nhật Admin Layout để dùng server session**
+   - Chuyển `app/admin/layout.tsx` thành server component, lấy session từ `auth()`.
+   - Tách header thành 2 file: `header.tsx` (server) và `header-client.tsx` (client) để hỗ trợ signOut.
+
+7. **Cập nhật header với chức năng đăng xuất**
+   - `header-client.tsx`: hiển thị user info từ session, xử lý signOut qua `signOut()` từ `next-auth/react`.
+
+8. **Thêm AUTH_SECRET vào .env**
+   - Tạo secret key cho NextAuth.
+
+### Kiểm tra:
+- Chạy `npm run build`: pass (21 routes, 0 error).
+
+### Thông tin đăng nhập (từ seed):
+- Email: `younista666@gmail.com`
+- Password: `123456`
+
+---
+
+**Commit message:**
+```
+feat(auth): add NextAuth credentials login for admin with protected routes
+```

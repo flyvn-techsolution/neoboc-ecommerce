@@ -8,3 +8,5 @@ This version has breaking changes — APIs, conventions, and file structure may 
 - Khi chạy lệnh trên terminal và gặp lỗi, bạn có thể tiếp tục fix thử cách khác. Tuy nhiên nếu sau 3 lần chạy mà vẫn lỗi thì hãy cung cấp lệnh để tôi tự chạy trên terminal và đề xuất cho bạn cách fix lỗi.
 - Sau khi hoàn thành một task, luôn chạy lệnh build. Nếu build thất bại, hãy fix các lỗi được trả ra từ terminal. Sau đó build lại, nếu tiếp tục build thất bại thì hãy sửa là build lại cho tới khi không còn lỗi nữa.
 - Mỗi khi hoàn thành một task, ghi chi tiết công việc đã làm làm file agent_log.md ở root folder của project. Ở cuối mỗi log của task, thêm 1 commit message mô tả ngắn gọn những việc vừa làm để tôi commit vào git.
+- Luôn luôn tuân thủ code pattern của Cursor, sử dụng các hàm mà Cursor đã dựng sẵn.
+- Bạn không có quyền truy cập vào các file như .env, .env.local, .env.production. Vì vậy bạn có thể fallback lần lượt theo các bước sau: ghi thêm key vào .env.example. kèm comment, hoặc cung cấp cho tôi để tôi thêm vào giúp bạn.
