@@ -577,3 +577,35 @@ feat(auth): add NextAuth credentials login for admin with protected routes
 ```
 fix(auth): stop admin login redirect loop via middleware and dashboard route group
 ```
+
+---
+
+## Task: Sửa lỗi "Event handlers cannot be passed to Client Component props" tại `/admin`
+
+### Ngày: 2026-04-09
+
+### Vấn đề ban đầu:
+- Truy cập `/admin` (đã đăng nhập) bị lỗi runtime: không thể truyền function `onClose={() => {}}` từ server component xuống client component `AdminSidebar`.
+
+### Nguyên nhân:
+- `app/admin/(dashboard)/layout.tsx` là server component, nhưng gọi trực tiếp `<AdminSidebar onClose={() => {}} />` và `<AdminHeader onMenuClick={() => {}} />` — đây là event handler (function) không serializable được từ server → client.
+
+### Công việc đã làm:
+
+1. **Tạo `src/components/admin/dashboard-shell.tsx`**
+   - Client component chứa toàn bộ shell: quản lý state `isSidebarOpen`, render `<AdminSidebar>`, `<AdminHeaderClient>`, `<main>`.
+   - Nhận prop `user` (serializable) từ server.
+
+2. **Cập nhật `app/admin/(dashboard)/layout.tsx`**
+   - Server component: lấy `session` qua `auth()`, truyền `user` xuống `<DashboardShell>`.
+   - Không còn truyền function props trực tiếp.
+
+### Kiểm tra:
+- `npm run build`: pass (21 routes, 0 error).
+
+---
+
+**Commit message:**
+```
+fix(layout): extract dashboard shell as client component to avoid server-client prop errors
+```
