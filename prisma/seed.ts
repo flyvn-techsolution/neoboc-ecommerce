@@ -555,10 +555,10 @@ async function main() {
   // 10. Tạo Menu mẫu (Header)
   // ============================================
   const headerMenus = [
-    { name: 'Trang Chủ', url: '/', location: MenuLocation.header as const },
-    { name: 'Sản Phẩm', url: '/products', location: MenuLocation.header as const },
-    { name: 'Bộ Sưu Tập', url: '/collections', location: MenuLocation.header as const },
-    { name: 'Thiết Kế Riêng', url: '/design-request', location: MenuLocation.header as const },
+    { name: 'Trang Chủ', url: '/', location: MenuLocation.header },
+    { name: 'Sản Phẩm', url: '/products', location: MenuLocation.header },
+    { name: 'Bộ Sưu Tập', url: '/collections', location: MenuLocation.header },
+    { name: 'Thiết Kế Riêng', url: '/design-request', location: MenuLocation.header },
   ]
 
   for (let i = 0; i < headerMenus.length; i++) {
@@ -578,9 +578,9 @@ async function main() {
 
   // Footer menus
   const footerMenus = [
-    { name: 'Về Chúng Tôi', url: '/about', location: MenuLocation.footer as const },
-    { name: 'Chính Sách Đổi Trả', url: '/return-policy', location: MenuLocation.footer as const },
-    { name: 'Liên Hệ', url: '/contact', location: MenuLocation.footer as const },
+    { name: 'Về Chúng Tôi', url: '/about', location: MenuLocation.footer },
+    { name: 'Chính Sách Đổi Trả', url: '/return-policy', location: MenuLocation.footer },
+    { name: 'Liên Hệ', url: '/contact', location: MenuLocation.footer },
   ]
 
   for (let i = 0; i < footerMenus.length; i++) {
