@@ -405,3 +405,43 @@ fix(admin): correct order status active state and remove all-status submenu item
 ```
 style(admin): add level-3 dot indicators and active text-only highlight
 ```
+
+---
+
+## Task: Tái cấu trúc section sidebar theo nhóm Đơn hàng, Người dùng, Nội dung
+
+### Ngày: 2026-04-09
+
+### Vấn đề ban đầu:
+- `Hoàn tiền` và `Yêu cầu thiết kế` đang nằm ở section `Khác`, chưa gom vào `Đơn hàng`.
+- Chưa có section riêng cho `Người dùng`.
+- Nhóm nội dung đang là `Quản lý nội dung`, cần đổi thành `Nội dung` và đặt phía trên `Cài đặt`.
+
+### Công việc đã làm:
+
+1. **Di chuyển menu liên quan đơn hàng**
+   - Cập nhật `src/lib/constants.ts`:
+     - Di chuyển `Hoàn tiền` và `Yêu cầu thiết kế` vào section `Đơn hàng`.
+     - Giữ `Đơn vị vận chuyển` ở section `Khác`.
+
+2. **Tạo section `Người dùng` riêng**
+   - Tách item `Người dùng` ra thành section độc lập tên `Người dùng`.
+
+3. **Tạo section `Nội dung`**
+   - Đổi section `Quản lý nội dung` thành `Nội dung`.
+   - Giữ các item:
+     - `Hero Section`
+     - `Trang nội dung`
+     - `Menu & Footer`
+   - Đảm bảo section `Nội dung` nằm trên section `Cài đặt`.
+
+### Kiểm tra:
+- Chạy `npm run lint -- src/lib/constants.ts src/components/admin/sidebar.tsx`: pass (0 error).
+- Có 4 warnings `unused imports` trong `src/lib/constants.ts` đã tồn tại từ trước.
+
+---
+
+**Commit message:**
+```
+refactor(admin): regroup sidebar sections for orders, users, and content
+```

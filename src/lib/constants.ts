@@ -211,11 +211,6 @@ export const adminNavSections: NavSection[] = [
           },
         ],
       },
-    ],
-  },
-  {
-    title: "Khác",
-    items: [
       {
         title: "Hoàn tiền",
         href: "/admin/refunds",
@@ -226,6 +221,11 @@ export const adminNavSections: NavSection[] = [
         href: "/admin/design-requests",
         icon: Palette,
       },
+    ],
+  },
+  {
+    title: "Khác",
+    items: [
       {
         title: "Đơn vị vận chuyển",
         href: "/admin/shipping-carriers",
@@ -234,13 +234,18 @@ export const adminNavSections: NavSection[] = [
     ],
   },
   {
-    title: "Quản lý nội dung",
+    title: "Người dùng",
     items: [
       {
         title: "Người dùng",
         href: "/admin/users",
         icon: Users,
       },
+    ],
+  },
+  {
+    title: "Nội dung",
+    items: [
       {
         title: "Hero Section",
         href: "/admin/hero-sections",
