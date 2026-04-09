@@ -1,10 +1,10 @@
 "use client";
 
 import { useState } from "react";
-import { StatCard } from "../../components/admin/stat-card";
-import { StatusBadge } from "../../components/admin/status-badge";
-import { KPI_CARDS_CONFIG, TIME_FILTERS, ORDER_STATUS_CONFIG } from "../../lib/constants";
-import { formatCurrency, formatDate } from "../../lib/utils/format";
+import { StatCard } from "../../src/components/admin/stat-card";
+import { StatusBadge } from "../../src/components/admin/status-badge";
+import { KPI_CARDS_CONFIG, TIME_FILTERS, ORDER_STATUS_CONFIG } from "../../src/lib/constants";
+import { formatCurrency, formatDate } from "../../src/lib/utils/format";
 import {
   Calendar,
   Filter,

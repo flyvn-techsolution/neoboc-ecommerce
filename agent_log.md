@@ -107,3 +107,52 @@ feat(admin): create admin dashboard layout with sidebar, header, and dashboard p
 ```
 fix(prisma): update schema for Prisma 7 and run initial migration
 ```
+
+---
+
+## Task: Gắn Admin Pages vào Route
+
+### Ngày: 2026-04-09
+
+### Vấn đề ban đầu:
+- Admin pages nằm trong `src/app/admin/` nhưng bị Next.js bỏ qua vì có 2 `app/` folders cùng tồn tại (default `app/` tạo bởi `create-next-app` và `src/app/` của project)
+- `tsconfig.json` có `@/*` alias trỏ sai (`@/*` → `./` thay vì `./src/`)
+
+### Công việc đã làm:
+
+1. **Phân tích cấu trúc project**
+   - Phát hiện có 2 app folders: `app/` (root) và `src/app/` (admin pages)
+   - Xác định `@/*` alias trong tsconfig trỏ sai
+
+2. **Giải pháp**
+   - Xóa default `app/` folder (rỗng, không cần thiết)
+   - Di chuyển `src/app/` → `app/` (admin pages trở thành app folder chính)
+   - Sửa `tsconfig.json`: `@/*` → `["./src/*"]`
+   - Sửa import paths trong `app/admin/layout.tsx` và `app/admin/page.tsx`: `../../components/...` → `../../src/components/...`
+
+3. **Kết quả build**
+   - Build thành công với 17 routes admin:
+     - `/admin` - Dashboard
+     - `/admin/categories` - Quản lý phân loại
+     - `/admin/collections` - Quản lý bộ sưu tập
+     - `/admin/design-requests` - Quản lý yêu cầu thiết kế
+     - `/admin/hero-sections` - Quản lý hero section
+     - `/admin/menus` - Quản lý menu
+     - `/admin/orders` - Quản lý đơn hàng
+     - `/admin/pages` - Quản lý trang nội dung
+     - `/admin/products` - Quản lý sản phẩm
+     - `/admin/products/new` - Thêm sản phẩm mới
+     - `/admin/refunds` - Quản lý hoàn tiền
+     - `/admin/settings` - Cài đặt chung
+     - `/admin/settings/payment` - Cài đặt thanh toán
+     - `/admin/settings/seo` - Cài đặt SEO
+     - `/admin/settings/social` - Cài đặt social
+     - `/admin/shipping-carriers` - Quản lý đơn vị vận chuyển
+     - `/admin/users` - Quản lý người dùng
+
+---
+
+**Commit message:**
+```
+fix(routing): move src/app to app/ and fix tsconfig alias to register admin routes
+```
