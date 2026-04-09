@@ -155,15 +155,20 @@ export function AdminSidebar({ isOpen = true, onClose }: AdminSidebarProps) {
     parentKey: string = ""
   ) => {
     const hasChildren = item.children && item.children.length > 0;
+    const isLevel3Leaf = !hasChildren && depth > 0;
     const active = isActive(item.href);
     const Icon = item.icon;
     const itemKey = `${parentKey}/${item.title}`;
     const childExpanded = expandedChildren.has(itemKey);
     const itemRowClassName = cn(
       "flex w-full items-center gap-3 px-3 py-2.5 text-sm font-medium rounded-lg transition-colors",
-      active
-        ? "bg-brand-500/10 text-brand-500"
-        : "text-slate-300 hover:bg-slate-800 hover:text-white",
+      isLevel3Leaf
+        ? active
+          ? "text-brand-500"
+          : "text-slate-300 hover:bg-slate-800 hover:text-white"
+        : active
+          ? "bg-brand-500/10 text-brand-500"
+          : "text-slate-300 hover:bg-slate-800 hover:text-white",
       depth > 0 && "ml-6"
     );
 
@@ -241,9 +246,12 @@ export function AdminSidebar({ isOpen = true, onClose }: AdminSidebarProps) {
         href={item.href || "#"}
         className={itemRowClassName}
       >
+        {isLevel3Leaf && (
+          <span className="h-1.5 w-1.5 flex-shrink-0 rounded-full bg-current" />
+        )}
         <Icon className="h-4 w-4 flex-shrink-0" />
         <span>{item.title}</span>
-        {active && (
+        {active && !isLevel3Leaf && (
           <span className="ml-auto h-1.5 w-1.5 rounded-full bg-brand-500" />
         )}
       </Link>

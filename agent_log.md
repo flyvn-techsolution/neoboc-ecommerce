@@ -366,3 +366,42 @@ fix(admin): navigate on linked parent menu and expand only via chevron icon
 ```
 fix(admin): correct order status active state and remove all-status submenu item
 ```
+
+---
+
+## Task: Thêm dot indicator cho sub menu level 3 và cập nhật style active
+
+### Ngày: 2026-04-09
+
+### Vấn đề ban đầu:
+- Sub menu level 3 chưa có dot indicator ở đầu item.
+- Khi active vẫn còn nền hồng, chưa đúng yêu cầu hiển thị chỉ đổi màu dot/icon/label.
+
+### Công việc đã làm:
+
+1. **Thêm dot indicator cho item level 3**
+   - Cập nhật `src/components/admin/sidebar.tsx`:
+     - Xác định item level 3 theo điều kiện leaf item trong submenu (`!hasChildren && depth > 0`).
+     - Thêm dot ở đầu item bằng `span` với `bg-current` để đồng bộ màu theo trạng thái.
+
+2. **Cập nhật style active cho level 3**
+   - Active level 3:
+     - Dot màu hồng.
+     - Icon + label màu hồng.
+     - Bỏ nền hồng (`bg-brand-500/10`).
+   - Non-active level 3:
+     - Dot cùng màu với menu item non-active (`text-slate-300`, hover theo màu text).
+
+3. **Giữ nguyên style các level khác**
+   - Chỉ áp dụng behavior mới cho level 3 leaf item.
+   - Các item cấp khác vẫn giữ logic active/background hiện có.
+
+### Kiểm tra:
+- Chạy `npm run lint -- src/components/admin/sidebar.tsx`: pass.
+
+---
+
+**Commit message:**
+```
+style(admin): add level-3 dot indicators and active text-only highlight
+```
