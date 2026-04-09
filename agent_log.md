@@ -864,3 +864,35 @@ Xóa checkbox `Tự động tạo` ở trường slug. Khi tên sản phẩm tha
 ```
 refactor(product-form): remove auto-slug toggle and always sync slug with product name changes
 ```
+
+---
+
+## Task: Hiển thị validation messages trong form sản phẩm
+
+### Ngày: 2026-04-09 21:54:32 +07
+
+### Mô tả công việc:
+
+Sửa logic validate để các thông báo lỗi được hiển thị đúng trên form thêm/sửa sản phẩm khi submit dữ liệu không hợp lệ.
+
+### Công việc đã làm:
+
+- Cập nhật `src/components/admin/product/product-form.tsx`:
+  - Thêm `setError` và `clearErrors` từ `react-hook-form`.
+  - Trong `handleFormSubmit`, gọi `clearErrors()` trước khi validate thủ công.
+  - Map các lỗi từ `validateForm(...)` vào form state bằng `setError(...)` để `errors.<field>.message` hiển thị trên UI.
+- Giữ nguyên các rule validate hiện có:
+  - `name`: bắt buộc
+  - `slug`: bắt buộc + đúng pattern slug
+  - `price`: >= 0
+  - `stock`: >= 0
+
+### Kiểm tra:
+- `npm run build`: pass (24 routes, 0 error)
+
+---
+
+**Commit message:**
+```
+fix(product-form): show validation messages by mapping manual validation errors to react-hook-form
+```

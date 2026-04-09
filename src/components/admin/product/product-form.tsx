@@ -71,6 +71,8 @@ export function ProductForm({
     handleSubmit,
     watch,
     setValue,
+    setError,
+    clearErrors,
     formState: { errors },
   } = useForm<ProductFormData>({
     defaultValues: {
@@ -121,10 +123,19 @@ export function ProductForm({
 
   const handleFormSubmit = handleSubmit(
     (data) => {
+      clearErrors();
+
       const formErrors = validateForm(data);
       if (Object.keys(formErrors).length > 0) {
         Object.entries(formErrors).forEach(([field, error]) => {
-          // Set form errors manually
+          if (!error) {
+            return;
+          }
+
+          setError(field as keyof ProductFormData, {
+            type: "manual",
+            message: error.message,
+          });
         });
         return;
       }
