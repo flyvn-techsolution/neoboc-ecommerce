@@ -1,9 +1,10 @@
 "use client";
 
 import { useState } from "react";
+import { AnimatePresence, motion } from "framer-motion";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { ChevronDown, ChevronRight, X } from "lucide-react";
+import { ChevronRight, X } from "lucide-react";
 import { cn } from "../../lib/utils/format";
 import { adminNavSections, SITE_CONFIG, type NavItem } from "../../lib/constants";
 
@@ -33,13 +34,13 @@ export function AdminSidebar({ isOpen = true, onClose }: AdminSidebarProps) {
     });
   };
 
-  const toggleChildren = (title: string) => {
+  const toggleChildren = (key: string) => {
     setExpandedChildren((prev) => {
       const next = new Set(prev);
-      if (next.has(title)) {
-        next.delete(title);
+      if (next.has(key)) {
+        next.delete(key);
       } else {
-        next.add(title);
+        next.add(key);
       }
       return next;
     });
@@ -51,17 +52,22 @@ export function AdminSidebar({ isOpen = true, onClose }: AdminSidebarProps) {
     return pathname.startsWith(href.split("?")[0]);
   };
 
-  const renderNavItem = (item: NavItem, depth: number = 0) => {
+  const renderNavItem = (
+    item: NavItem,
+    depth: number = 0,
+    parentKey: string = ""
+  ) => {
     const hasChildren = item.children && item.children.length > 0;
     const active = isActive(item.href);
     const Icon = item.icon;
-    const childExpanded = expandedChildren.has(item.title);
+    const itemKey = `${parentKey}/${item.title}`;
+    const childExpanded = expandedChildren.has(itemKey);
 
     if (hasChildren) {
       return (
-        <div key={item.title}>
+        <div key={itemKey}>
           <button
-            onClick={() => toggleChildren(item.title)}
+            onClick={() => toggleChildren(itemKey)}
             className={cn(
               "flex w-full items-center gap-3 px-3 py-2.5 text-sm font-medium rounded-lg transition-colors",
               active
@@ -72,24 +78,36 @@ export function AdminSidebar({ isOpen = true, onClose }: AdminSidebarProps) {
           >
             <Icon className="h-4 w-4 flex-shrink-0" />
             <span className="flex-1 text-left">{item.title}</span>
-            {childExpanded ? (
-              <ChevronDown className="h-4 w-4" />
-            ) : (
+            <motion.span
+              className="inline-flex"
+              animate={{ rotate: childExpanded ? 90 : 0 }}
+              transition={{ duration: 0.2, ease: "easeOut" }}
+            >
               <ChevronRight className="h-4 w-4" />
-            )}
+            </motion.span>
           </button>
-          {childExpanded && (
-            <div className="mt-1 space-y-1">
-              {item.children!.map((child) => renderNavItem(child, depth + 1))}
-            </div>
-          )}
+          <AnimatePresence initial={false}>
+            {childExpanded && (
+              <motion.div
+                initial={{ height: 0, opacity: 0 }}
+                animate={{ height: "auto", opacity: 1 }}
+                exit={{ height: 0, opacity: 0 }}
+                transition={{ duration: 0.22, ease: [0.4, 0, 0.2, 1] }}
+                className="mt-1 space-y-1 overflow-hidden"
+              >
+                {item.children!.map((child) =>
+                  renderNavItem(child, depth + 1, itemKey)
+                )}
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
       );
     }
 
     return (
       <Link
-        key={item.title}
+        key={itemKey}
         href={item.href || "#"}
         className={cn(
           "flex items-center gap-3 px-3 py-2.5 text-sm font-medium rounded-lg transition-colors",
@@ -156,17 +174,29 @@ export function AdminSidebar({ isOpen = true, onClose }: AdminSidebarProps) {
                   className="flex w-full items-center justify-between px-3 py-2 text-xs font-semibold uppercase tracking-wider text-slate-500 hover:text-slate-300"
                 >
                   <span>{section.title}</span>
-                  {expandedSections.has(section.title) ? (
-                    <ChevronDown className="h-3 w-3" />
-                  ) : (
+                  <motion.span
+                    className="inline-flex"
+                    animate={{ rotate: expandedSections.has(section.title) ? 90 : 0 }}
+                    transition={{ duration: 0.2, ease: "easeOut" }}
+                  >
                     <ChevronRight className="h-3 w-3" />
-                  )}
+                  </motion.span>
                 </button>
-                {expandedSections.has(section.title) && (
-                  <div className="mt-1 space-y-1">
-                    {section.items.map((item) => renderNavItem(item))}
-                  </div>
-                )}
+                <AnimatePresence initial={false}>
+                  {expandedSections.has(section.title) && (
+                    <motion.div
+                      initial={{ height: 0, opacity: 0 }}
+                      animate={{ height: "auto", opacity: 1 }}
+                      exit={{ height: 0, opacity: 0 }}
+                      transition={{ duration: 0.25, ease: [0.4, 0, 0.2, 1] }}
+                      className="mt-1 space-y-1 overflow-hidden"
+                    >
+                      {section.items.map((item) =>
+                        renderNavItem(item, 0, section.title)
+                      )}
+                    </motion.div>
+                  )}
+                </AnimatePresence>
               </div>
             ))}
           </div>

@@ -188,3 +188,42 @@ fix(routing): move src/app to app/ and fix tsconfig alias to register admin rout
 ```
 fix(admin): make dashboard KPI cards responsive by reducing xl columns
 ```
+
+---
+
+## Task: Thêm animation cho Sidebar toggle và Dashboard load
+
+### Ngày: 2026-04-09
+
+### Vấn đề ban đầu:
+- Sidebar menu/submenu mở rộng theo kiểu hiển thị tức thì, chưa có hiệu ứng chuyển động.
+- Dashboard chưa có animation khi vừa load xong nên trải nghiệm vào trang chưa mượt.
+
+### Công việc đã làm:
+
+1. **Cài thư viện animation**
+   - Thêm `framer-motion` vào dependencies.
+
+2. **Thêm animation cho toggle menu/submenu trong sidebar**
+   - Cập nhật `src/components/admin/sidebar.tsx`:
+     - Dùng `AnimatePresence` + `motion.div` cho phần expand/collapse section và submenu (height + opacity).
+     - Dùng `motion.span` để rotate icon chevron khi toggle.
+     - Chuẩn hóa key cho submenu theo đường dẫn cha/con để tránh xung đột state.
+
+3. **Thêm animation khi dashboard mount**
+   - Cập nhật `app/admin/page.tsx`:
+     - Bọc page bằng `motion.div` với variants container.
+     - Thêm stagger animation cho các section (header, KPI, chart rows, recent activity).
+     - Thêm stagger animation riêng cho từng `StatCard` trong KPI grid.
+
+4. **Kiểm tra chất lượng sau thay đổi**
+   - Chạy `npm run lint -- src/components/admin/sidebar.tsx app/admin/page.tsx`: pass.
+   - Chạy `npm run build`: pass.
+   - Ghi nhận warning của Recharts khi prerender (`width(-1)/height(-1)`), không làm fail build.
+
+---
+
+**Commit message:**
+```
+feat(admin): add motion animations for sidebar toggles and dashboard load
+```

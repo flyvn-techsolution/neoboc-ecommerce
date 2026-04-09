@@ -1,19 +1,17 @@
 "use client";
 
 import { useState } from "react";
+import { motion } from "framer-motion";
 import { StatCard } from "../../src/components/admin/stat-card";
 import { StatusBadge } from "../../src/components/admin/status-badge";
-import { KPI_CARDS_CONFIG, TIME_FILTERS, ORDER_STATUS_CONFIG } from "../../src/lib/constants";
-import { formatCurrency, formatDate } from "../../src/lib/utils/format";
+import { KPI_CARDS_CONFIG, TIME_FILTERS } from "../../src/lib/constants";
+import { formatCurrency } from "../../src/lib/utils/format";
 import {
   Calendar,
-  Filter,
   ShoppingCart,
   RefreshCw,
-  TrendingUp,
   Clock,
   CheckCircle,
-  AlertCircle,
 } from "lucide-react";
 import {
   LineChart,
@@ -38,6 +36,52 @@ const ORDER_STATUS_COLORS = {
   shipping: "#6366f1",
   delivered: "#22c55e",
   cancelled: "#ef4444",
+};
+
+const dashboardContainerVariants = {
+  hidden: { opacity: 0 },
+  show: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.1,
+      delayChildren: 0.05,
+    },
+  },
+};
+
+const dashboardSectionVariants = {
+  hidden: { opacity: 0, y: 14 },
+  show: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      duration: 0.35,
+      ease: [0.22, 1, 0.36, 1] as const,
+    },
+  },
+};
+
+const kpiGridVariants = {
+  hidden: {},
+  show: {
+    transition: {
+      staggerChildren: 0.07,
+      delayChildren: 0.05,
+    },
+  },
+};
+
+const kpiCardVariants = {
+  hidden: { opacity: 0, y: 10, scale: 0.98 },
+  show: {
+    opacity: 1,
+    y: 0,
+    scale: 1,
+    transition: {
+      duration: 0.28,
+      ease: [0.22, 1, 0.36, 1] as const,
+    },
+  },
 };
 
 const mockRevenueData = [
@@ -155,9 +199,17 @@ export default function AdminDashboardPage() {
   ];
 
   return (
-    <div className="space-y-6">
+    <motion.div
+      className="space-y-6"
+      variants={dashboardContainerVariants}
+      initial="hidden"
+      animate="show"
+    >
       {/* Page Header */}
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+      <motion.section
+        variants={dashboardSectionVariants}
+        className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between"
+      >
         <div>
           <h1 className="text-2xl font-semibold text-slate-900">Dashboard</h1>
           <p className="mt-1 text-sm text-slate-500">
@@ -184,29 +236,38 @@ export default function AdminDashboardPage() {
             ))}
           </div>
         </div>
-      </div>
+      </motion.section>
 
       {/* KPI Cards */}
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-        {kpiData.map((kpi, index) => {
-          const config = KPI_CARDS_CONFIG[index];
-          return (
-            <StatCard
-              key={kpi.id}
-              title={kpi.title}
-              value={kpi.value}
-              icon={config.icon}
-              color={config.color}
-              format={kpi.format || "number"}
-              change={kpi.change}
-              changeLabel={kpi.changeLabel}
-            />
-          );
-        })}
-      </div>
+      <motion.section variants={dashboardSectionVariants}>
+        <motion.div
+          className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"
+          variants={kpiGridVariants}
+        >
+          {kpiData.map((kpi, index) => {
+            const config = KPI_CARDS_CONFIG[index];
+            return (
+              <motion.div key={kpi.id} variants={kpiCardVariants}>
+                <StatCard
+                  title={kpi.title}
+                  value={kpi.value}
+                  icon={config.icon}
+                  color={config.color}
+                  format={kpi.format || "number"}
+                  change={kpi.change}
+                  changeLabel={kpi.changeLabel}
+                />
+              </motion.div>
+            );
+          })}
+        </motion.div>
+      </motion.section>
 
       {/* Charts Row 1 */}
-      <div className="grid gap-6 lg:grid-cols-2">
+      <motion.section
+        variants={dashboardSectionVariants}
+        className="grid gap-6 lg:grid-cols-2"
+      >
         {/* Revenue Chart */}
         <div className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
           <h3 className="text-base font-semibold text-slate-900">Doanh thu theo tháng</h3>
@@ -274,10 +335,13 @@ export default function AdminDashboardPage() {
             </ResponsiveContainer>
           </div>
         </div>
-      </div>
+      </motion.section>
 
       {/* Charts Row 2 */}
-      <div className="grid gap-6 lg:grid-cols-2">
+      <motion.section
+        variants={dashboardSectionVariants}
+        className="grid gap-6 lg:grid-cols-2"
+      >
         {/* Top Products Bar Chart */}
         <div className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
           <h3 className="text-base font-semibold text-slate-900">Top 5 sản phẩm bán chạy</h3>
@@ -325,10 +389,13 @@ export default function AdminDashboardPage() {
             </ResponsiveContainer>
           </div>
         </div>
-      </div>
+      </motion.section>
 
       {/* Recent Activity */}
-      <div className="grid gap-6 lg:grid-cols-2">
+      <motion.section
+        variants={dashboardSectionVariants}
+        className="grid gap-6 lg:grid-cols-2"
+      >
         {/* Recent Orders */}
         <div className="rounded-xl border border-slate-200 bg-white shadow-sm">
           <div className="flex items-center justify-between border-b border-slate-200 px-6 py-4">
@@ -421,7 +488,7 @@ export default function AdminDashboardPage() {
             ))}
           </div>
         </div>
-      </div>
-    </div>
+      </motion.section>
+    </motion.div>
   );
 }
