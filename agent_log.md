@@ -609,3 +609,23 @@ fix(auth): stop admin login redirect loop via middleware and dashboard route gro
 ```
 fix(layout): extract dashboard shell as client component to avoid server-client prop errors
 ```
+
+---
+
+## Task: Di chuyển "Đơn vị vận chuyển" vào section "Cài đặt"
+
+### Ngày: 2026-04-09
+
+### Công việc đã làm:
+- Di chuyển menu item "Đơn vị vận chuyển" từ section "Khác" sang section "Cài đặt" trong `src/lib/constants.ts`.
+- Xóa section "Khác" vì không còn menu item nào.
+
+### Kiểm tra:
+- `npm run build`: pass.
+
+---
+
+**Commit message:**
+```
+refactor(admin): move shipping carriers to settings section in sidebar
+```

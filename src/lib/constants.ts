@@ -224,8 +224,28 @@ export const adminNavSections: NavSection[] = [
     ],
   },
   {
-    title: "Khác",
+    title: "Cài đặt",
     items: [
+      {
+        title: "Cài đặt chung",
+        href: "/admin/settings",
+        icon: Settings,
+      },
+      {
+        title: "SEO",
+        href: "/admin/settings/seo",
+        icon: Search,
+      },
+      {
+        title: "Thanh toán",
+        href: "/admin/settings/payment",
+        icon: Banknote,
+      },
+      {
+        title: "Social Links",
+        href: "/admin/settings/social",
+        icon: Globe,
+      },
       {
         title: "Đơn vị vận chuyển",
         href: "/admin/shipping-carriers",
@@ -260,31 +280,6 @@ export const adminNavSections: NavSection[] = [
         title: "Menu & Footer",
         href: "/admin/menus",
         icon: Menu,
-      },
-    ],
-  },
-  {
-    title: "Cài đặt",
-    items: [
-      {
-        title: "Cài đặt chung",
-        href: "/admin/settings",
-        icon: Settings,
-      },
-      {
-        title: "SEO",
-        href: "/admin/settings/seo",
-        icon: Search,
-      },
-      {
-        title: "Thanh toán",
-        href: "/admin/settings/payment",
-        icon: Banknote,
-      },
-      {
-        title: "Social Links",
-        href: "/admin/settings/social",
-        icon: Globe,
       },
     ],
   },
