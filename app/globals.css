@@ -3,18 +3,18 @@
 @theme inline {
   --color-sidebar-background: #0f172a;
   --color-sidebar-foreground: #e2e8f0;
-  --color-sidebar-primary: #ec4899;
+  --color-sidebar-primary: #22c55e;
   --color-sidebar-primary-foreground: #ffffff;
   --color-sidebar-accent: #1e293b;
   --color-sidebar-accent-foreground: #e2e8f0;
   --color-sidebar-border: #334155;
-  --color-sidebar-ring: #ec4899;
+  --color-sidebar-ring: #22c55e;
 
-  --color-brand-50: #fdf2f8;
-  --color-brand-100: #fce7f3;
-  --color-brand-500: #ec4899;
-  --color-brand-600: #db2777;
-  --color-brand-700: #be185d;
+  --color-brand-50: #f0fdf4;
+  --color-brand-100: #dcfce7;
+  --color-brand-500: #22c55e;
+  --color-brand-600: #16a34a;
+  --color-brand-700: #15803d;
 
   --color-success-500: #22c55e;
   --color-warning-500: #f59e0b;

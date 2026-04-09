@@ -445,3 +445,40 @@ style(admin): add level-3 dot indicators and active text-only highlight
 ```
 refactor(admin): regroup sidebar sections for orders, users, and content
 ```
+
+---
+
+## Task: Đổi màu chủ đạo website sang xanh lá
+
+### Ngày: 2026-04-09
+
+### Vấn đề ban đầu:
+- Hệ màu `brand` và một số UI component vẫn đang dùng tông hồng, chưa đồng nhất với yêu cầu màu chủ đạo xanh lá.
+
+### Công việc đã làm:
+
+1. **Đổi palette brand trong global theme**
+   - Cập nhật `app/globals.css`:
+     - `--color-brand-50/100/500/600/700` chuyển sang tông xanh lá.
+     - `--color-sidebar-primary` và `--color-sidebar-ring` đồng bộ sang xanh lá.
+
+2. **Thay các class màu hồng hard-code**
+   - Cập nhật `app/admin/products/page.tsx`:
+     - `bg-pink-500/600` -> `bg-brand-500/600`.
+   - Cập nhật `app/admin/settings/page.tsx`:
+     - `bg-pink-50 text-pink-600` -> `bg-brand-50 text-brand-600`.
+
+3. **Đồng bộ màu biểu đồ dashboard theo brand**
+   - Cập nhật `app/admin/page.tsx`:
+     - Thêm hằng `BRAND_COLOR = "var(--color-brand-500)"`.
+     - Đổi màu line/bar chart từ hồng sang `BRAND_COLOR`.
+
+### Kiểm tra:
+- Chạy `npm run lint -- app/admin/page.tsx app/admin/products/page.tsx app/admin/settings/page.tsx`: pass.
+
+---
+
+**Commit message:**
+```
+style(theme): switch primary brand color from pink to green
+```

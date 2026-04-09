@@ -37,6 +37,7 @@ const ORDER_STATUS_COLORS = {
   delivered: "#22c55e",
   cancelled: "#ef4444",
 };
+const BRAND_COLOR = "var(--color-brand-500)";
 
 const dashboardContainerVariants = {
   hidden: { opacity: 0 },
@@ -289,9 +290,9 @@ export default function AdminDashboardPage() {
                 <Line
                   type="monotone"
                   dataKey="revenue"
-                  stroke="#ec4899"
+                  stroke={BRAND_COLOR}
                   strokeWidth={2}
-                  dot={{ fill: "#ec4899", strokeWidth: 2 }}
+                  dot={{ fill: BRAND_COLOR, strokeWidth: 2 }}
                   activeDot={{ r: 6 }}
                 />
               </LineChart>
@@ -360,7 +361,7 @@ export default function AdminDashboardPage() {
                   }}
                   formatter={(value) => [formatCurrency(Number(value)), "Doanh thu"]}
                 />
-                <Bar dataKey="revenue" fill="#ec4899" radius={[0, 4, 4, 0]} />
+                <Bar dataKey="revenue" fill={BRAND_COLOR} radius={[0, 4, 4, 0]} />
               </BarChart>
             </ResponsiveContainer>
           </div>

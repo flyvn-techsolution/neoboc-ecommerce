@@ -13,7 +13,7 @@ export default function SettingsPage() {
           <nav className="space-y-1">
             <a
               href="/admin/settings"
-              className="flex items-center gap-3 rounded-lg bg-pink-50 px-3 py-2 text-sm font-medium text-pink-600"
+              className="flex items-center gap-3 rounded-lg bg-brand-50 px-3 py-2 text-sm font-medium text-brand-600"
             >
               Cài đặt chung
             </a>

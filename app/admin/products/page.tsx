@@ -10,7 +10,7 @@ export default function ProductsPage() {
         </div>
         <a
           href="/admin/products/new"
-          className="inline-flex items-center justify-center gap-2 rounded-lg bg-pink-500 px-4 py-2.5 text-sm font-medium text-white shadow-sm transition-colors hover:bg-pink-600"
+          className="inline-flex items-center justify-center gap-2 rounded-lg bg-brand-500 px-4 py-2.5 text-sm font-medium text-white shadow-sm transition-colors hover:bg-brand-600"
         >
           Thêm sản phẩm mới
         </a>
