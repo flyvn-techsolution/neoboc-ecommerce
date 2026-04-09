@@ -227,3 +227,39 @@ fix(admin): make dashboard KPI cards responsive by reducing xl columns
 ```
 feat(admin): add motion animations for sidebar toggles and dashboard load
 ```
+
+---
+
+## Task: Lưu trạng thái submenu sidebar và ẩn scrollbar
+
+### Ngày: 2026-04-09
+
+### Vấn đề ban đầu:
+- Đóng submenu rồi reload trang gây lỗi hydration mismatch do trạng thái render client khác server.
+- Sidebar đang hiển thị scrollbar gây rối giao diện.
+
+### Công việc đã làm:
+
+1. **Fix hydration khi restore trạng thái sidebar**
+   - Cập nhật `src/components/admin/sidebar.tsx`:
+     - Đặt trạng thái render mặc định đồng nhất giữa server/client (mở tất cả section/submenu).
+     - Chỉ restore trạng thái từ `localStorage` trong `useEffect` sau khi mount.
+     - Thêm cờ `hasRestoredFromStorage` để chỉ ghi ngược lại `localStorage` sau khi restore xong.
+
+2. **Giữ trạng thái đóng/mở submenu cho các lần sau**
+   - Lưu riêng danh sách section/submenu expanded vào `localStorage`.
+   - Reuse lại khi vào lại dashboard để giữ đúng trạng thái người dùng.
+
+3. **Ẩn scrollbar nhưng vẫn cho scroll**
+   - Thêm utility `.hide-scrollbar` trong `app/globals.css` (WebKit + Firefox + IE mode).
+   - Áp dụng vào vùng nav của sidebar: vẫn `overflow-y-auto` nhưng không hiển thị thanh scroll.
+
+4. **Kiểm tra**
+   - Chạy `npm run lint -- src/components/admin/sidebar.tsx`: pass.
+
+---
+
+**Commit message:**
+```
+fix(admin): persist sidebar state without hydration mismatch and hide scrollbar
+```

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -13,14 +13,96 @@ interface AdminSidebarProps {
   onClose?: () => void;
 }
 
+const SIDEBAR_SECTIONS_STORAGE_KEY = "admin_sidebar_expanded_sections_v1";
+const SIDEBAR_CHILDREN_STORAGE_KEY = "admin_sidebar_expanded_children_v1";
+
+const ALL_SECTION_TITLES = adminNavSections.map((section) => section.title);
+
+const collectExpandableChildKeys = (
+  items: NavItem[],
+  parentKey: string
+): string[] => {
+  const keys: string[] = [];
+
+  items.forEach((item) => {
+    if (!item.children || item.children.length === 0) {
+      return;
+    }
+
+    const itemKey = `${parentKey}/${item.title}`;
+    keys.push(itemKey);
+    keys.push(...collectExpandableChildKeys(item.children, itemKey));
+  });
+
+  return keys;
+};
+
+const ALL_EXPANDABLE_CHILD_KEYS = adminNavSections.flatMap((section) =>
+  collectExpandableChildKeys(section.items, section.title)
+);
+
+const parseStoredArray = (rawValue: string | null): string[] | null => {
+  if (!rawValue) return null;
+
+  try {
+    const parsed = JSON.parse(rawValue);
+    if (!Array.isArray(parsed)) return null;
+    return parsed.filter((value): value is string => typeof value === "string");
+  } catch {
+    return null;
+  }
+};
+
 export function AdminSidebar({ isOpen = true, onClose }: AdminSidebarProps) {
   const pathname = usePathname();
   const [expandedSections, setExpandedSections] = useState<Set<string>>(
-    () => new Set(["Tổng quan"])
+    () => new Set(ALL_SECTION_TITLES)
   );
   const [expandedChildren, setExpandedChildren] = useState<Set<string>>(
-    () => new Set()
+    () => new Set(ALL_EXPANDABLE_CHILD_KEYS)
   );
+  const [hasRestoredFromStorage, setHasRestoredFromStorage] = useState(false);
+
+  useEffect(() => {
+    const storedSections = parseStoredArray(
+      localStorage.getItem(SIDEBAR_SECTIONS_STORAGE_KEY)
+    );
+    if (storedSections) {
+      const allowedSections = new Set(ALL_SECTION_TITLES);
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setExpandedSections(
+        new Set(storedSections.filter((title) => allowedSections.has(title)))
+      );
+    }
+
+    const storedChildren = parseStoredArray(
+      localStorage.getItem(SIDEBAR_CHILDREN_STORAGE_KEY)
+    );
+    if (storedChildren) {
+      const allowedChildren = new Set(ALL_EXPANDABLE_CHILD_KEYS);
+      setExpandedChildren(
+        new Set(storedChildren.filter((key) => allowedChildren.has(key)))
+      );
+    }
+
+    setHasRestoredFromStorage(true);
+  }, []);
+
+  useEffect(() => {
+    if (!hasRestoredFromStorage) return;
+    localStorage.setItem(
+      SIDEBAR_SECTIONS_STORAGE_KEY,
+      JSON.stringify(Array.from(expandedSections))
+    );
+  }, [expandedSections, hasRestoredFromStorage]);
+
+  useEffect(() => {
+    if (!hasRestoredFromStorage) return;
+    localStorage.setItem(
+      SIDEBAR_CHILDREN_STORAGE_KEY,
+      JSON.stringify(Array.from(expandedChildren))
+    );
+  }, [expandedChildren, hasRestoredFromStorage]);
 
   const toggleSection = (title: string) => {
     setExpandedSections((prev) => {
@@ -165,7 +247,7 @@ export function AdminSidebar({ isOpen = true, onClose }: AdminSidebarProps) {
         </div>
 
         {/* Navigation */}
-        <nav className="flex-1 overflow-y-auto px-3 py-4 scrollbar-thin scrollbar-thumb-slate-700 scrollbar-track-transparent">
+        <nav className="hide-scrollbar flex-1 overflow-y-auto px-3 py-4">
           <div className="space-y-6">
             {adminNavSections.map((section) => (
               <div key={section.title}>
