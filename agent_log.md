@@ -156,3 +156,35 @@ fix(prisma): update schema for Prisma 7 and run initial migration
 ```
 fix(routing): move src/app to app/ and fix tsconfig alias to register admin routes
 ```
+
+---
+
+## Task: Điều chỉnh responsive cho KPI Stat Cards trên Admin Dashboard
+
+### Ngày: 2026-04-09
+
+### Vấn đề ban đầu:
+- Toàn bộ 6 stat cards hiển thị trên cùng 1 hàng ở breakpoint lớn, khiến mỗi card quá hẹp và nội dung bị vỡ layout.
+
+### Công việc đã làm:
+
+1. **Xác định vị trí layout KPI cards**
+   - Kiểm tra `app/admin/page.tsx`, section `KPI Cards`.
+   - Xác nhận grid đang dùng `xl:grid-cols-6`, là nguyên nhân chính khiến card bị nén.
+
+2. **Điều chỉnh lại số cột theo breakpoint để responsive**
+   - Cập nhật class grid từ:
+     - `grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6`
+   - Thành:
+     - `grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4`
+
+3. **Kiểm tra nhanh chất lượng thay đổi**
+   - Chạy lint cho file dashboard để đảm bảo không phát sinh lỗi cú pháp hoặc lỗi ESLint nghiêm trọng.
+   - Kết quả: không có error, chỉ còn các warning `unused imports` đã tồn tại trước đó.
+
+---
+
+**Commit message:**
+```
+fix(admin): make dashboard KPI cards responsive by reducing xl columns
+```
