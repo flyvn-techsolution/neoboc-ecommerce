@@ -263,3 +263,36 @@ feat(admin): add motion animations for sidebar toggles and dashboard load
 ```
 fix(admin): persist sidebar state without hydration mismatch and hide scrollbar
 ```
+
+---
+
+## Task: Tạo submenu cấp 3 cho trạng thái đơn hàng trong mục Tất cả đơn hàng
+
+### Ngày: 2026-04-09
+
+### Vấn đề ban đầu:
+- Các trạng thái đơn hàng đang nằm cùng cấp trực tiếp trong section `Đơn hàng`, chưa nằm bên trong menu `Tất cả đơn hàng`.
+
+### Công việc đã làm:
+
+1. **Tái cấu trúc navigation cho nhóm Đơn hàng**
+   - Cập nhật `src/lib/constants.ts` trong `adminNavSections`.
+   - Giữ menu cha `Tất cả đơn hàng` và thêm `children` chứa danh sách trạng thái:
+     - `Tất cả` (`/admin/orders`)
+     - `Chờ thanh toán` (`/admin/orders?status=pending_payment`)
+     - `Đang xử lý` (`/admin/orders?status=preparing`)
+     - `Đã hoàn thành` (`/admin/orders?status=delivered`)
+
+2. **Đảm bảo tương thích với sidebar hiện tại**
+   - Sidebar đã có render đệ quy + animation cho menu con, nên cấu trúc mới hiển thị đúng theo level 3 mà không cần sửa thêm component.
+
+### Kiểm tra:
+- Chạy `npm run lint -- src/lib/constants.ts src/components/admin/sidebar.tsx`: pass (0 error).
+- Có 4 warnings `unused imports` trong `src/lib/constants.ts` đã tồn tại từ trước.
+
+---
+
+**Commit message:**
+```
+feat(admin): add third-level order status submenu under all orders
+```

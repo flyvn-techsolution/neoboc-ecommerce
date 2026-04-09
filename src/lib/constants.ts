@@ -193,21 +193,28 @@ export const adminNavSections: NavSection[] = [
         title: "Tất cả đơn hàng",
         href: "/admin/orders",
         icon: ShoppingCart,
-      },
-      {
-        title: "Chờ thanh toán",
-        href: "/admin/orders?status=pending_payment",
-        icon: Clock,
-      },
-      {
-        title: "Đang xử lý",
-        href: "/admin/orders?status=preparing",
-        icon: RefreshCw,
-      },
-      {
-        title: "Đã hoàn thành",
-        href: "/admin/orders?status=delivered",
-        icon: CheckCircle,
+        children: [
+          {
+            title: "Tất cả",
+            href: "/admin/orders",
+            icon: ShoppingCart,
+          },
+          {
+            title: "Chờ thanh toán",
+            href: "/admin/orders?status=pending_payment",
+            icon: Clock,
+          },
+          {
+            title: "Đang xử lý",
+            href: "/admin/orders?status=preparing",
+            icon: RefreshCw,
+          },
+          {
+            title: "Đã hoàn thành",
+            href: "/admin/orders?status=delivered",
+            icon: CheckCircle,
+          },
+        ],
       },
     ],
   },
