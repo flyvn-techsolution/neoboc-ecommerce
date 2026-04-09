@@ -195,11 +195,6 @@ export const adminNavSections: NavSection[] = [
         icon: ShoppingCart,
         children: [
           {
-            title: "Tất cả",
-            href: "/admin/orders",
-            icon: ShoppingCart,
-          },
-          {
             title: "Chờ thanh toán",
             href: "/admin/orders?status=pending_payment",
             icon: Clock,

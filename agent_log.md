@@ -327,3 +327,42 @@ feat(admin): add third-level order status submenu under all orders
 ```
 fix(admin): navigate on linked parent menu and expand only via chevron icon
 ```
+
+---
+
+## Task: Sửa active state submenu trạng thái đơn hàng và xóa item "Tất cả"
+
+### Ngày: 2026-04-09
+
+### Vấn đề ban đầu:
+- Khi chọn một trạng thái đơn hàng, các menu trạng thái khác cũng bị active do logic active chỉ so sánh theo pathname.
+- Trong submenu trạng thái đang có item `Tất cả` không còn cần thiết.
+
+### Công việc đã làm:
+
+1. **Sửa logic active theo query params**
+   - Cập nhật `src/components/admin/sidebar.tsx`:
+     - Thêm `useSearchParams` từ `next/navigation`.
+     - Nâng cấp hàm `isActive(href)`:
+       - Với link không có query: active theo path hiện tại.
+       - Với link có query: bắt buộc khớp path và từng query param (ví dụ `status`) thì mới active.
+   - Kết quả: chỉ đúng submenu trạng thái đang chọn mới active.
+
+2. **Xóa menu item `Tất cả`**
+   - Cập nhật `src/lib/constants.ts`:
+     - Xóa child `Tất cả` trong `Tất cả đơn hàng`.
+     - Giữ lại các trạng thái:
+       - `Chờ thanh toán`
+       - `Đang xử lý`
+       - `Đã hoàn thành`
+
+### Kiểm tra:
+- Chạy `npm run lint -- src/components/admin/sidebar.tsx src/lib/constants.ts`: pass (0 error).
+- Có 4 warnings `unused imports` trong `src/lib/constants.ts` đã tồn tại từ trước.
+
+---
+
+**Commit message:**
+```
+fix(admin): correct order status active state and remove all-status submenu item
+```

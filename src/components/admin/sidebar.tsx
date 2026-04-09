@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useSearchParams } from "next/navigation";
 import { ChevronRight, X } from "lucide-react";
 import { cn } from "../../lib/utils/format";
 import { adminNavSections, SITE_CONFIG, type NavItem } from "../../lib/constants";
@@ -55,6 +55,7 @@ const parseStoredArray = (rawValue: string | null): string[] | null => {
 
 export function AdminSidebar({ isOpen = true, onClose }: AdminSidebarProps) {
   const pathname = usePathname();
+  const searchParams = useSearchParams();
   const [expandedSections, setExpandedSections] = useState<Set<string>>(
     () => new Set(ALL_SECTION_TITLES)
   );
@@ -130,8 +131,22 @@ export function AdminSidebar({ isOpen = true, onClose }: AdminSidebarProps) {
 
   const isActive = (href?: string) => {
     if (!href) return false;
-    if (href === "/admin") return pathname === "/admin";
-    return pathname.startsWith(href.split("?")[0]);
+
+    const [targetPath, queryString] = href.split("?");
+    if (targetPath === "/admin") return pathname === "/admin";
+
+    if (!queryString) {
+      return pathname === targetPath || pathname.startsWith(`${targetPath}/`);
+    }
+
+    if (pathname !== targetPath) return false;
+
+    const targetParams = new URLSearchParams(queryString);
+    for (const [key, value] of targetParams.entries()) {
+      if (searchParams.get(key) !== value) return false;
+    }
+
+    return true;
   };
 
   const renderNavItem = (
