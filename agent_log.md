@@ -896,3 +896,34 @@ Sửa logic validate để các thông báo lỗi được hiển thị đúng t
 ```
 fix(product-form): show validation messages by mapping manual validation errors to react-hook-form
 ```
+
+---
+
+## Task: Hiển thị border/ring đỏ cho input invalid
+
+### Ngày: 2026-04-09 22:06:40 +07
+
+### Mô tả công việc:
+
+Khi field trong form thêm/sửa sản phẩm có validation message, input tương ứng hiển thị trạng thái lỗi bằng border đỏ và focus ring đỏ.
+
+### Công việc đã làm:
+
+- Cập nhật `src/components/admin/product/product-form.tsx`:
+  - Thêm `className` có điều kiện cho các input có validate lỗi:
+    - `name`
+    - `slug`
+    - `price`
+    - `stock`
+  - Khi có lỗi: áp dụng `border-red-500 focus-visible:ring-red-500`.
+- Giữ nguyên logic hiển thị message bên dưới input, chỉ bổ sung visual state cho input invalid.
+
+### Kiểm tra:
+- `npm run build`: pass (24 routes, 0 error)
+
+---
+
+**Commit message:**
+```
+style(product-form): highlight invalid inputs with red border and focus ring
+```

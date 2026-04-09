@@ -269,6 +269,9 @@ export function ProductForm({
                   id="name"
                   {...register("name")}
                   onChange={(e) => handleNameChange(e.target.value)}
+                  className={cn(
+                    errors.name && "border-red-500 focus-visible:ring-red-500"
+                  )}
                   placeholder="Nhập tên sản phẩm"
                 />
                 {errors.name && (
@@ -285,6 +288,9 @@ export function ProductForm({
                 <Input
                   id="slug"
                   {...register("slug")}
+                  className={cn(
+                    errors.slug && "border-red-500 focus-visible:ring-red-500"
+                  )}
                   placeholder="san-pham-duong-dan"
                 />
                 {errors.slug && (
@@ -323,6 +329,9 @@ export function ProductForm({
                     step="1000"
                     min="0"
                     {...register("price", { valueAsNumber: true })}
+                    className={cn(
+                      errors.price && "border-red-500 focus-visible:ring-red-500"
+                    )}
                   />
                   {errors.price && (
                     <p className="mt-1 text-sm text-red-500">
@@ -363,6 +372,9 @@ export function ProductForm({
                   type="number"
                   min="0"
                   {...register("stock", { valueAsNumber: true })}
+                  className={cn(
+                    errors.stock && "border-red-500 focus-visible:ring-red-500"
+                  )}
                 />
                 {errors.stock && (
                   <p className="mt-1 text-sm text-red-500">
