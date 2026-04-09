@@ -2,10 +2,10 @@
 
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { StatCard } from "../../src/components/admin/stat-card";
-import { StatusBadge } from "../../src/components/admin/status-badge";
-import { KPI_CARDS_CONFIG, TIME_FILTERS } from "../../src/lib/constants";
-import { formatCurrency } from "../../src/lib/utils/format";
+import { StatCard } from "@/components/admin/stat-card";
+import { StatusBadge } from "@/components/admin/status-badge";
+import { KPI_CARDS_CONFIG, TIME_FILTERS } from "@/lib/constants";
+import { formatCurrency } from "@/lib/utils/format";
 import {
   Calendar,
   ShoppingCart,

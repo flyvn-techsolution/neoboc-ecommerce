@@ -536,3 +536,44 @@ style(theme): switch primary brand color from pink to green
 ```
 feat(auth): add NextAuth credentials login for admin with protected routes
 ```
+
+---
+
+## Task: Sửa vòng lặp redirect (307 / ERR_TOO_MANY_REDIRECTS) tại `/admin/login`
+
+### Ngày: 2026-04-09
+
+### Vấn đề ban đầu:
+- Truy cập `/admin/login` bị trình duyệt báo redirect quá nhiều lần (307 / `ERR_TOO_MANY_REDIRECTS`).
+
+### Nguyên nhân:
+1. Middleware `export { auth as middleware }` áp dụng cho toàn bộ `/admin/*`, kể cả `/admin/login` → NextAuth redirect về trang đăng nhập → lặp vô hạn.
+2. `app/admin/layout.tsx` gọi `redirect("/admin/login")` khi chưa có session cho mọi route con, kể cả chính trang login → có thể tự redirect liên tục.
+
+### Công việc đã làm:
+
+1. **Middleware tùy chỉnh** (`src/middleware.ts`)
+   - Dùng `auth((req) => { ... })`: cho phép `/admin/login` không cần session; nếu đã đăng nhập thì redirect về `/admin`.
+   - Các route `/admin/*` khác: chưa đăng nhập thì redirect `/admin/login` kèm `callbackUrl`.
+
+2. **Tách layout dashboard và login**
+   - `app/admin/layout.tsx`: chỉ render `{children}` (không ép redirect).
+   - Di chuyển toàn bộ trang quản trị vào `app/admin/(dashboard)/` với `layout.tsx` mới: kiểm tra session + shell sidebar/header.
+   - `app/admin/login` nằm ngoài `(dashboard)` nên không chạy `redirect("/admin/login")` khi chưa đăng nhập.
+
+3. **Sửa import sau khi di chuyển thư mục**
+   - `app/admin/(dashboard)/page.tsx`: đổi import sang alias `@/...`.
+
+4. **Trang login + Suspense**
+   - Bọc phần dùng `useSearchParams` trong `<Suspense>` để build Next.js 16 không lỗi prerender.
+
+### Kiểm tra:
+- Chạy `npm run build`: pass.
+- Chạy `npm run lint` trên các file đã sửa: pass.
+
+---
+
+**Commit message:**
+```
+fix(auth): stop admin login redirect loop via middleware and dashboard route group
+```
