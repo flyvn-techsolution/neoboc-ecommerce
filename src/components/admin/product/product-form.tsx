@@ -66,8 +66,6 @@ export function ProductForm({
       stock: number;
     }>
   >(product?.variants || []);
-  const [autoSlug, setAutoSlug] = useState(!product);
-
   const {
     register,
     handleSubmit,
@@ -92,13 +90,9 @@ export function ProductForm({
     },
   });
 
-  const watchedName = watch("name");
-
   const handleNameChange = (value: string) => {
     setValue("name", value);
-    if (autoSlug) {
-      setValue("slug", generateSlug(value));
-    }
+    setValue("slug", generateSlug(value));
   };
 
   const validateForm = (data: ProductFormData): FieldErrors<ProductFormData> => {
@@ -274,20 +268,9 @@ export function ProductForm({
               </div>
 
               <div>
-                <div className="flex items-center gap-2">
-                  <Label htmlFor="slug">
-                    Slug <span className="text-red-500">*</span>
-                  </Label>
-                  <label className="flex items-center gap-1 text-xs text-slate-500 cursor-pointer">
-                    <input
-                      type="checkbox"
-                      checked={autoSlug}
-                      onChange={(e) => setAutoSlug(e.target.checked)}
-                      className="rounded border-slate-300"
-                    />
-                    Tự động tạo
-                  </label>
-                </div>
+                <Label htmlFor="slug">
+                  Slug <span className="text-red-500">*</span>
+                </Label>
                 <Input
                   id="slug"
                   {...register("slug")}
