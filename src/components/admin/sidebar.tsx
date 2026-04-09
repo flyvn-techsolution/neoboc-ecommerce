@@ -144,30 +144,63 @@ export function AdminSidebar({ isOpen = true, onClose }: AdminSidebarProps) {
     const Icon = item.icon;
     const itemKey = `${parentKey}/${item.title}`;
     const childExpanded = expandedChildren.has(itemKey);
+    const itemRowClassName = cn(
+      "flex w-full items-center gap-3 px-3 py-2.5 text-sm font-medium rounded-lg transition-colors",
+      active
+        ? "bg-brand-500/10 text-brand-500"
+        : "text-slate-300 hover:bg-slate-800 hover:text-white",
+      depth > 0 && "ml-6"
+    );
 
     if (hasChildren) {
       return (
         <div key={itemKey}>
-          <button
-            onClick={() => toggleChildren(itemKey)}
-            className={cn(
-              "flex w-full items-center gap-3 px-3 py-2.5 text-sm font-medium rounded-lg transition-colors",
-              active
-                ? "bg-brand-500/10 text-brand-500"
-                : "text-slate-300 hover:bg-slate-800 hover:text-white",
-              depth > 0 && "ml-6"
-            )}
-          >
-            <Icon className="h-4 w-4 flex-shrink-0" />
-            <span className="flex-1 text-left">{item.title}</span>
-            <motion.span
-              className="inline-flex"
-              animate={{ rotate: childExpanded ? 90 : 0 }}
-              transition={{ duration: 0.2, ease: "easeOut" }}
+          {item.href ? (
+            <div className={itemRowClassName}>
+              <Link
+                href={item.href}
+                className="flex min-w-0 flex-1 items-center gap-3"
+              >
+                <Icon className="h-4 w-4 flex-shrink-0" />
+                <span className="truncate">{item.title}</span>
+                {active && (
+                  <span className="ml-auto h-1.5 w-1.5 rounded-full bg-brand-500" />
+                )}
+              </Link>
+              <button
+                type="button"
+                onClick={() => toggleChildren(itemKey)}
+                aria-label={childExpanded ? "Thu gọn menu con" : "Mở rộng menu con"}
+                aria-expanded={childExpanded}
+                className="rounded-md p-1 text-slate-400 transition-colors hover:bg-slate-800 hover:text-white"
+              >
+                <motion.span
+                  className="inline-flex"
+                  animate={{ rotate: childExpanded ? 90 : 0 }}
+                  transition={{ duration: 0.2, ease: "easeOut" }}
+                >
+                  <ChevronRight className="h-4 w-4" />
+                </motion.span>
+              </button>
+            </div>
+          ) : (
+            <button
+              type="button"
+              onClick={() => toggleChildren(itemKey)}
+              className={itemRowClassName}
+              aria-expanded={childExpanded}
             >
-              <ChevronRight className="h-4 w-4" />
-            </motion.span>
-          </button>
+              <Icon className="h-4 w-4 flex-shrink-0" />
+              <span className="flex-1 text-left">{item.title}</span>
+              <motion.span
+                className="inline-flex"
+                animate={{ rotate: childExpanded ? 90 : 0 }}
+                transition={{ duration: 0.2, ease: "easeOut" }}
+              >
+                <ChevronRight className="h-4 w-4" />
+              </motion.span>
+            </button>
+          )}
           <AnimatePresence initial={false}>
             {childExpanded && (
               <motion.div
@@ -191,13 +224,7 @@ export function AdminSidebar({ isOpen = true, onClose }: AdminSidebarProps) {
       <Link
         key={itemKey}
         href={item.href || "#"}
-        className={cn(
-          "flex items-center gap-3 px-3 py-2.5 text-sm font-medium rounded-lg transition-colors",
-          active
-            ? "bg-brand-500/10 text-brand-500"
-            : "text-slate-300 hover:bg-slate-800 hover:text-white",
-          depth > 0 && "ml-6"
-        )}
+        className={itemRowClassName}
       >
         <Icon className="h-4 w-4 flex-shrink-0" />
         <span>{item.title}</span>

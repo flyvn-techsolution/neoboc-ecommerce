@@ -296,3 +296,34 @@ fix(admin): persist sidebar state without hydration mismatch and hide scrollbar
 ```
 feat(admin): add third-level order status submenu under all orders
 ```
+
+---
+
+## Task: Cho phép click trực tiếp menu có link và chỉ expand khi bấm icon
+
+### Ngày: 2026-04-09
+
+### Vấn đề ban đầu:
+- Menu `Tất cả đơn hàng` vừa có link vừa có submenu nhưng đang chỉ hỗ trợ expand, không thể click trực tiếp để đi tới trang.
+
+### Công việc đã làm:
+
+1. **Cập nhật hành vi item có `children` trong sidebar**
+   - Sửa `src/components/admin/sidebar.tsx`:
+     - Nếu item có `href` + `children`: click vào phần label sẽ điều hướng bằng `Link`.
+     - Nút expand được tách riêng ở icon chevron bên phải, chỉ icon này mới toggle submenu.
+     - Nếu item không có `href` + `children`: giữ hành vi click cả row để expand/collapse.
+
+2. **Giữ nguyên animation và trạng thái active**
+   - Giữ hiệu ứng rotate icon + collapse/expand bằng `framer-motion`.
+   - Giữ hiển thị active indicator cho item có link.
+
+### Kiểm tra:
+- Chạy `npm run lint -- src/components/admin/sidebar.tsx`: pass.
+
+---
+
+**Commit message:**
+```
+fix(admin): navigate on linked parent menu and expand only via chevron icon
+```
