@@ -625,7 +625,160 @@ fix(layout): extract dashboard shell as client component to avoid server-client 
 
 ---
 
+## Task: Đẩy section "Cài đặt" xuống cuối menu sidebar
+
+### Ngày: 2026-04-09
+
+### Công việc đã làm:
+- Di chuyển section "Cài đặt" từ vị trí giữa xuống cuối sidebar trong `src/lib/constants.ts`.
+- Thứ tự sidebar mới: Đơn hàng → Người dùng → Nội dung → **Cài đặt**.
+
+### Kiểm tra:
+- `npm run build`: pass.
+
+---
+
+**Commit message:**
+```
+refactor(admin): move settings section to bottom of sidebar
+```
+
+---
+
 **Commit message:**
 ```
 refactor(admin): move shipping carriers to settings section in sidebar
+```
+
+---
+
+## Task: CRUD Sản phẩm
+
+### Ngày: 2026-04-09
+
+### Mô tả công việc:
+
+Xây dựng tính năng CRUD (Create, Read, Update, Delete) đầy đủ cho sản phẩm trong trang quản trị admin.
+
+### Công việc đã làm:
+
+#### 1. Tạo API Routes
+
+- **GET/POST `/api/products`**
+  - GET: Danh sách sản phẩm với pagination, sort, filter (search, isActive, categoryId, collectionId)
+  - POST: Tạo sản phẩm mới với categories, collections, variants
+
+- **GET/PUT/DELETE `/api/products/[id]`**
+  - GET: Lấy chi tiết một sản phẩm
+  - PUT: Cập nhật sản phẩm (bao gồm update categories, collections, variants qua transaction)
+  - DELETE: Xóa sản phẩm (không cho xóa nếu có đơn hàng liên quan)
+
+- **GET `/api/categories`**: Lấy danh sách categories cho dropdown
+- **GET `/api/collections`**: Lấy danh sách collections cho dropdown
+
+#### 2. Tạo Types
+
+- **File `src/types/product.ts`**
+  - `Product`, `ProductVariant`, `ProductCategory`, `ProductCollection`
+  - `ProductsResponse`, `ProductFilters`
+  - `CreateProductInput`, `UpdateProductInput`
+
+#### 3. Tạo API Client
+
+- **File `src/lib/api/product-api.ts`**
+  - Functions: `fetchProducts`, `fetchProduct`, `createProduct`, `updateProduct`, `deleteProduct`
+  - Error handling với `ProductApiError` class
+
+#### 4. Tạo React Query Hooks
+
+- **File `src/lib/hooks/use-products.ts`**
+  - `useProducts`: Lấy danh sách sản phẩm với filters
+  - `useProduct`: Lấy chi tiết một sản phẩm
+  - `useCreateProduct`: Tạo sản phẩm mới
+  - `useUpdateProduct`: Cập nhật sản phẩm
+  - `useDeleteProduct`: Xóa sản phẩm
+
+#### 5. Cài đặt QueryProvider
+
+- **File `src/components/providers/query-provider.tsx`**
+  - Wrap app với TanStack Query Provider
+- **Cập nhật `app/layout.tsx`**: Thêm QueryProvider
+
+#### 6. Tạo UI Components mới
+
+- **File `src/components/ui/select.tsx`**: Select component
+- **File `src/components/ui/dialog.tsx`**: Dialog component (Radix UI)
+- **File `src/components/ui/textarea.tsx`**: Textarea component
+- **File `src/components/ui/label.tsx`**: Label component (Radix UI)
+- **File `src/components/ui/switch.tsx`**: Switch component (Radix UI)
+- **File `src/hooks/use-toast.tsx`**: Toast notification system
+
+Cài đặt dependencies: `@radix-ui/react-dialog`, `@radix-ui/react-switch`, `@radix-ui/react-label`
+
+#### 7. Tạo Product Components
+
+- **File `src/components/admin/product/product-table.tsx`**
+  - Bảng danh sách sản phẩm với columns: hình ảnh, tên, giá, tồn kho, trạng thái, danh mục
+  - Tích hợp TanStack Table với sorting, pagination
+  - Search bar + Status filter
+  - Modal xác nhận xóa
+  - Action buttons: Edit, Delete
+
+- **File `src/components/admin/product/product-form.tsx`**
+  - Form tạo/sửa sản phẩm với các sections:
+    - Thông tin cơ bản (tên, slug, mô tả)
+    - Giá cả (giá bán, giá gốc, giá khuyến mãi, tồn kho)
+    - Hình ảnh (thêm xóa URL ảnh)
+    - Biến thể sản phẩm (thêm/sửa/xóa variants)
+    - Sidebar: Danh mục, Bộ sưu tập, SEO
+  - Auto-generate slug từ tên sản phẩm
+  - Toggle trạng thái hoạt động
+
+#### 8. Cập nhật Pages
+
+- **File `app/admin/(dashboard)/products/page.tsx`**
+  - Trang danh sách sản phẩm với ProductTable
+  - Xử lý URL params cho pagination, sorting, filtering
+
+- **File `app/admin/(dashboard)/products/new/page.tsx`**
+  - Trang tạo sản phẩm mới với ProductForm
+  - Fetch categories và collections
+
+- **File `app/admin/(dashboard)/products/[id]/page.tsx`**
+  - Trang chỉnh sửa sản phẩm với ProductForm
+  - Fetch product details, categories, collections
+
+### Tính năng:
+
+1. **Danh sách sản phẩm**
+   - Tìm kiếm theo tên/slug
+   - Lọc theo trạng thái (đang bán/đã ẩn)
+   - Sắp xếp theo ngày tạo, tên, giá, tồn kho
+   - Phân trang
+   - Hiển thị hình ảnh, giá (có sale hiển thị giá gốc gạch ngang)
+
+2. **Tạo sản phẩm**
+   - Nhập thông tin cơ bản
+   - Thêm hình ảnh qua URL
+   - Quản lý biến thể (màu sắc, size...)
+   - Chọn danh mục và bộ sưu tập
+   - Cấu hình SEO
+
+3. **Chỉnh sửa sản phẩm**
+   - Load thông tin hiện tại
+   - Cập nhật tất cả thông tin
+   - Cập nhật biến thể
+
+4. **Xóa sản phẩm**
+   - Xác nhận trước khi xóa
+   - Không cho xóa nếu có đơn hàng liên quan
+
+### Kiểm tra:
+- `npm run build`: pass (24 routes, 0 error)
+
+---
+
+**Commit message:**
+```
+feat(product): add complete CRUD functionality for products with API routes, TanStack Query hooks, and admin pages
 ```

@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import { QueryProvider } from "@/components/providers/query-provider";
+import { ToastProvider } from "@/hooks/use-toast";
 
 export const metadata: Metadata = {
   title: "NeoBóc Ecommerce",
@@ -13,7 +15,13 @@ export default function RootLayout({
 }) {
   return (
     <html lang="vi">
-      <body className="antialiased">{children}</body>
+      <body className="antialiased">
+        <QueryProvider>
+          <ToastProvider>
+            {children}
+          </ToastProvider>
+        </QueryProvider>
+      </body>
     </html>
   );
 }
