@@ -257,7 +257,9 @@ export function ProductForm({
             </CardHeader>
             <CardContent className="space-y-4">
               <div>
-                <Label htmlFor="name">Tên sản phẩm *</Label>
+                <Label htmlFor="name">
+                  Tên sản phẩm <span className="text-red-500">*</span>
+                </Label>
                 <Input
                   id="name"
                   {...register("name")}
@@ -273,7 +275,9 @@ export function ProductForm({
 
               <div>
                 <div className="flex items-center gap-2">
-                  <Label htmlFor="slug">Slug *</Label>
+                  <Label htmlFor="slug">
+                    Slug <span className="text-red-500">*</span>
+                  </Label>
                   <label className="flex items-center gap-1 text-xs text-slate-500 cursor-pointer">
                     <input
                       type="checkbox"
@@ -316,7 +320,9 @@ export function ProductForm({
             <CardContent className="space-y-4">
               <div className="grid gap-4 sm:grid-cols-3">
                 <div>
-                  <Label htmlFor="price">Giá bán *</Label>
+                  <Label htmlFor="price">
+                    Giá bán <span className="text-red-500">*</span>
+                  </Label>
                   <Input
                     id="price"
                     type="number"

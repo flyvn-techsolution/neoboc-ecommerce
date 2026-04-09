@@ -782,3 +782,57 @@ Cài đặt dependencies: `@radix-ui/react-dialog`, `@radix-ui/react-switch`, `@
 ```
 feat(product): add complete CRUD functionality for products with API routes, TanStack Query hooks, and admin pages
 ```
+
+---
+
+## Task: Bắt đầu phiên làm việc của Code
+
+### Ngày: 2026-04-09 21:06:26 +07
+
+### Mô tả công việc:
+
+Thêm log mốc với nội dung "Bắt đầu phiên làm việc của Code" để đánh dấu các task từ thời điểm này do Codex thực hiện.
+
+### Công việc đã làm:
+
+- Kiểm tra format hiện có trong `agent_log.md` để giữ cấu trúc nhất quán.
+- Chạy `npm run build` để xác nhận trạng thái dự án trước khi chốt log.
+- Ghi thêm entry mốc bắt đầu phiên làm việc của Codex ở cuối file log.
+
+### Kiểm tra:
+- `npm run build`: pass (24 routes, 0 error)
+
+---
+
+**Commit message:**
+```
+chore(log): add codex session start marker in agent log
+```
+
+---
+
+## Task: Đổi màu đỏ cho dấu required trong form sản phẩm
+
+### Ngày: 2026-04-09 21:09:27 +07
+
+### Mô tả công việc:
+
+Cập nhật style trong form thêm/sửa sản phẩm để các dấu `*` (trường bắt buộc) hiển thị màu đỏ.
+
+### Công việc đã làm:
+
+- Chỉnh `src/components/admin/product/product-form.tsx` tại các label bắt buộc:
+  - `Tên sản phẩm *`
+  - `Slug *`
+  - `Giá bán *`
+- Tách dấu `*` thành `<span className="text-red-500">*</span>` để chỉ đổi màu ký tự required, giữ nguyên style phần text label.
+
+### Kiểm tra:
+- `npm run build`: pass (24 routes, 0 error)
+
+---
+
+**Commit message:**
+```
+style(product-form): make required asterisks red in product create/edit form
+```
