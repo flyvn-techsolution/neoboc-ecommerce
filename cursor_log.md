@@ -1,4 +1,4 @@
-# Agent Log
+# Cursor Log
 
 ## Task: Tạo Layout Admin Dashboard
 
@@ -785,171 +785,111 @@ feat(product): add complete CRUD functionality for products with API routes, Tan
 
 ---
 
-## Task: Bắt đầu phiên làm việc của Code
+## Task: CRUD Bộ sưu tập (Collections)
 
-### Ngày: 2026-04-09 21:06:26 +07
+### Ngày: 2026-04-10
 
 ### Mô tả công việc:
 
-Thêm log mốc với nội dung "Bắt đầu phiên làm việc của Code" để đánh dấu các task từ thời điểm này do Codex thực hiện.
+Xây dựng tính năng CRUD (Create, Read, Update, Delete) đầy đủ cho bộ sưu tập trong trang quản trị admin.
 
 ### Công việc đã làm:
 
-- Kiểm tra format hiện có trong `agent_log.md` để giữ cấu trúc nhất quán.
-- Chạy `npm run build` để xác nhận trạng thái dự án trước khi chốt log.
-- Ghi thêm entry mốc bắt đầu phiên làm việc của Codex ở cuối file log.
+#### 1. Tạo Types
+
+- **File `src/types/collection.ts`**
+  - `Collection`, `CollectionProduct`
+  - `CollectionsResponse`, `CollectionFilters`
+  - `CreateCollectionInput`, `UpdateCollectionInput`
+
+#### 2. Tạo API Client
+
+- **File `src/lib/api/collection-api.ts`**
+  - Functions: `fetchCollections`, `fetchCollection`, `createCollection`, `updateCollection`, `deleteCollection`
+  - Error handling với `CollectionApiError` class
+  - Pagination và filter support
+
+#### 3. Tạo React Query Hooks
+
+- **File `src/lib/hooks/use-collections.ts`**
+  - `useCollections`: Lấy danh sách bộ sưu tập với filters
+  - `useCollection`: Lấy chi tiết một bộ sưu tập
+  - `useCreateCollection`: Tạo bộ sưu tập mới
+  - `useUpdateCollection`: Cập nhật bộ sưu tập
+  - `useDeleteCollection`: Xóa bộ sưu tập
+
+#### 4. Cập nhật API Routes
+
+- **File `app/api/collections/route.ts`**
+  - GET: Danh sách bộ sưu tập với pagination, sort, filter (search, isActive)
+  - POST: Tạo bộ sưu tập mới
+
+- **File `app/api/collections/[id]/route.ts`** (mới)
+  - GET: Lấy chi tiết một bộ sưu tập
+  - PUT: Cập nhật bộ sưu tập
+  - DELETE: Xóa bộ sưu tập
+
+#### 5. Tạo UI Components
+
+- **File `src/components/admin/collection/collection-table.tsx`** (mới)
+  - Bảng danh sách bộ sưu tập với columns: tên, mô tả, trạng thái, ngày tạo
+  - Tích hợp TanStack Table với sorting, pagination
+  - Search bar + Status filter
+  - Modal xác nhận xóa
+  - Action buttons: Edit, Delete
+
+- **File `src/components/admin/collection/collection-form.tsx`** (mới)
+  - Form tạo/sửa bộ sưu tập với các sections:
+    - Thông tin cơ bản (tên, slug, mô tả)
+    - Sidebar: SEO (tiêu đề SEO, mô tả SEO)
+  - Auto-generate slug từ tên bộ sưu tập
+  - Toggle trạng thái hiển thị
+
+#### 6. Cập nhật Pages
+
+- **File `app/admin/(dashboard)/collections/page.tsx`**
+  - Trang danh sách bộ sưu tập với CollectionTable
+  - Xử lý URL params cho pagination, sorting, filtering
+
+- **File `app/admin/(dashboard)/collections/new/page.tsx`** (mới)
+  - Trang tạo bộ sưu tập mới với CollectionForm
+
+- **File `app/admin/(dashboard)/collections/[id]/page.tsx`** (mới)
+  - Trang chỉnh sửa bộ sưu tập với CollectionForm
+  - Fetch collection details
+
+#### 7. Cập nhật Navigation
+
+- **File `src/lib/constants.ts`**
+  - Thêm menu "Thêm bộ sưu tập mới" trong section "Danh mục"
+
+### Tính năng:
+
+1. **Danh sách bộ sưu tập**
+   - Tìm kiếm theo tên/slug
+   - Lọc theo trạng thái (đang hiển thị/đã ẩn)
+   - Sắp xếp theo ngày tạo, tên
+   - Phân trang
+   - Hiển thị số sản phẩm trong bộ sưu tập
+
+2. **Tạo bộ sưu tập**
+   - Nhập thông tin cơ bản
+   - Cấu hình SEO
+   - Toggle trạng thái hoạt động
+
+3. **Chỉnh sửa bộ sưu tập**
+   - Load thông tin hiện tại
+   - Cập nhật tất cả thông tin
+
+4. **Xóa bộ sưu tập**
+   - Xác nhận trước khi xóa
 
 ### Kiểm tra:
-- `npm run build`: pass (24 routes, 0 error)
+- `npm run build`: pass (25 routes, 0 error)
 
 ---
 
 **Commit message:**
 ```
-chore(log): add codex session start marker in agent log
-```
-
----
-
-## Task: Đổi màu đỏ cho dấu required trong form sản phẩm
-
-### Ngày: 2026-04-09 21:09:27 +07
-
-### Mô tả công việc:
-
-Cập nhật style trong form thêm/sửa sản phẩm để các dấu `*` (trường bắt buộc) hiển thị màu đỏ.
-
-### Công việc đã làm:
-
-- Chỉnh `src/components/admin/product/product-form.tsx` tại các label bắt buộc:
-  - `Tên sản phẩm *`
-  - `Slug *`
-  - `Giá bán *`
-- Tách dấu `*` thành `<span className="text-red-500">*</span>` để chỉ đổi màu ký tự required, giữ nguyên style phần text label.
-
-### Kiểm tra:
-- `npm run build`: pass (24 routes, 0 error)
-
----
-
-**Commit message:**
-```
-style(product-form): make required asterisks red in product create/edit form
-```
-
----
-
-## Task: Bỏ checkbox tự động tạo slug và đồng bộ slug theo tên sản phẩm
-
-### Ngày: 2026-04-09 21:14:17 +07
-
-### Mô tả công việc:
-
-Xóa checkbox `Tự động tạo` ở trường slug. Khi tên sản phẩm thay đổi thì slug tự động generate theo tên. Người dùng vẫn có thể chỉnh slug thủ công mà không ảnh hưởng đến tên sản phẩm.
-
-### Công việc đã làm:
-
-- Cập nhật `src/components/admin/product/product-form.tsx`:
-  - Xóa state `autoSlug` và phần UI checkbox `Tự động tạo`.
-  - Cập nhật `handleNameChange` để luôn gọi `setValue("slug", generateSlug(value))` khi input tên sản phẩm thay đổi.
-  - Dọn biến không còn dùng (`watchedName`) sau khi bỏ logic checkbox.
-- Giữ nguyên input slug có thể nhập tay (`{...register("slug")}`), nên người dùng vẫn chỉnh slug bình thường.
-
-### Kiểm tra:
-- `npm run build`: pass (24 routes, 0 error)
-
----
-
-**Commit message:**
-```
-refactor(product-form): remove auto-slug toggle and always sync slug with product name changes
-```
-
----
-
-## Task: Hiển thị validation messages trong form sản phẩm
-
-### Ngày: 2026-04-09 21:54:32 +07
-
-### Mô tả công việc:
-
-Sửa logic validate để các thông báo lỗi được hiển thị đúng trên form thêm/sửa sản phẩm khi submit dữ liệu không hợp lệ.
-
-### Công việc đã làm:
-
-- Cập nhật `src/components/admin/product/product-form.tsx`:
-  - Thêm `setError` và `clearErrors` từ `react-hook-form`.
-  - Trong `handleFormSubmit`, gọi `clearErrors()` trước khi validate thủ công.
-  - Map các lỗi từ `validateForm(...)` vào form state bằng `setError(...)` để `errors.<field>.message` hiển thị trên UI.
-- Giữ nguyên các rule validate hiện có:
-  - `name`: bắt buộc
-  - `slug`: bắt buộc + đúng pattern slug
-  - `price`: >= 0
-  - `stock`: >= 0
-
-### Kiểm tra:
-- `npm run build`: pass (24 routes, 0 error)
-
----
-
-**Commit message:**
-```
-fix(product-form): show validation messages by mapping manual validation errors to react-hook-form
-```
-
----
-
-## Task: Hiển thị border/ring đỏ cho input invalid
-
-### Ngày: 2026-04-09 22:06:40 +07
-
-### Mô tả công việc:
-
-Khi field trong form thêm/sửa sản phẩm có validation message, input tương ứng hiển thị trạng thái lỗi bằng border đỏ và focus ring đỏ.
-
-### Công việc đã làm:
-
-- Cập nhật `src/components/admin/product/product-form.tsx`:
-  - Thêm `className` có điều kiện cho các input có validate lỗi:
-    - `name`
-    - `slug`
-    - `price`
-    - `stock`
-  - Khi có lỗi: áp dụng `border-red-500 focus-visible:ring-red-500`.
-- Giữ nguyên logic hiển thị message bên dưới input, chỉ bổ sung visual state cho input invalid.
-
-### Kiểm tra:
-- `npm run build`: pass (24 routes, 0 error)
-
----
-
-**Commit message:**
-```
-style(product-form): highlight invalid inputs with red border and focus ring
-```
-
----
-
-## Task: Chuyển vị trí toast lên góc trên bên phải
-
-### Ngày: 2026-04-09 22:15:47 +07
-
-### Mô tả công việc:
-
-Thay đổi vị trí hiển thị toast từ `bottom-right` sang `top-right`.
-
-### Công việc đã làm:
-
-- Cập nhật `src/hooks/use-toast.tsx`:
-  - Đổi class viewport từ `bottom-4 right-4` thành `top-4 right-4`.
-  - Giữ nguyên các style và behavior toast khác.
-
-### Kiểm tra:
-- `npm run build`: pass (24 routes, 0 error)
-
----
-
-**Commit message:**
-```
-style(toast): move toast viewport to top-right position
+feat(collection): add complete CRUD functionality for collections with API routes, TanStack Query hooks, and admin pages
 ```
