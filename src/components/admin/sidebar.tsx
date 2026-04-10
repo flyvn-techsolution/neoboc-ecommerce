@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useMemo } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import Link from "next/link";
 import { usePathname, useSearchParams } from "next/navigation";
@@ -42,7 +42,7 @@ export function AdminSidebar({ isOpen = true, onClose }: AdminSidebarProps) {
     return true;
   }, [currentParams, pathname]);
 
-  const { expandedSections, expandedChildren } = useMemo(() => {
+  const activeExpansion = useMemo(() => {
     const sectionSet = new Set<string>();
     const childSet = new Set<string>();
 
@@ -79,6 +79,42 @@ export function AdminSidebar({ isOpen = true, onClose }: AdminSidebarProps) {
       expandedChildren: childSet,
     };
   }, [isActive]);
+
+  const [expandedSections, setExpandedSections] = useState<Set<string>>(
+    () => new Set(activeExpansion.expandedSections)
+  );
+  const [expandedChildren, setExpandedChildren] = useState<Set<string>>(
+    () => new Set(activeExpansion.expandedChildren)
+  );
+
+  useEffect(() => {
+    setExpandedSections(new Set(activeExpansion.expandedSections));
+    setExpandedChildren(new Set(activeExpansion.expandedChildren));
+  }, [activeExpansion]);
+
+  const toggleSection = (title: string) => {
+    setExpandedSections((prev) => {
+      const next = new Set(prev);
+      if (next.has(title)) {
+        next.delete(title);
+      } else {
+        next.add(title);
+      }
+      return next;
+    });
+  };
+
+  const toggleChildren = (key: string) => {
+    setExpandedChildren((prev) => {
+      const next = new Set(prev);
+      if (next.has(key)) {
+        next.delete(key);
+      } else {
+        next.add(key);
+      }
+      return next;
+    });
+  };
 
   const renderNavItem = (
     item: NavItem,
@@ -118,16 +154,29 @@ export function AdminSidebar({ isOpen = true, onClose }: AdminSidebarProps) {
                   <span className="ml-auto h-1.5 w-1.5 rounded-full bg-brand-500" />
                 )}
               </Link>
-              <motion.span
-                className="inline-flex rounded-md p-1 text-slate-400"
-                animate={{ rotate: childExpanded ? 90 : 0 }}
-                transition={{ duration: 0.2, ease: "easeOut" }}
+              <button
+                type="button"
+                onClick={() => toggleChildren(itemKey)}
+                aria-label={childExpanded ? "Thu gọn menu con" : "Mở rộng menu con"}
+                aria-expanded={childExpanded}
+                className="rounded-md p-1 text-slate-400 transition-colors hover:bg-slate-800 hover:text-white"
               >
-                <ChevronRight className="h-4 w-4" />
-              </motion.span>
+                <motion.span
+                  className="inline-flex"
+                  animate={{ rotate: childExpanded ? 90 : 0 }}
+                  transition={{ duration: 0.2, ease: "easeOut" }}
+                >
+                  <ChevronRight className="h-4 w-4" />
+                </motion.span>
+              </button>
             </div>
           ) : (
-            <div className={itemRowClassName}>
+            <button
+              type="button"
+              onClick={() => toggleChildren(itemKey)}
+              className={itemRowClassName}
+              aria-expanded={childExpanded}
+            >
               <Icon className="h-4 w-4 flex-shrink-0" />
               <span className="flex-1 text-left">{item.title}</span>
               <motion.span
@@ -137,7 +186,7 @@ export function AdminSidebar({ isOpen = true, onClose }: AdminSidebarProps) {
               >
                 <ChevronRight className="h-4 w-4" />
               </motion.span>
-            </div>
+            </button>
           )}
           <AnimatePresence initial={false}>
             {childExpanded && (
@@ -219,7 +268,11 @@ export function AdminSidebar({ isOpen = true, onClose }: AdminSidebarProps) {
           <div className="space-y-6">
             {adminNavSections.map((section) => (
               <div key={section.title}>
-                <div className="flex w-full items-center justify-between px-3 py-2 text-xs font-semibold uppercase tracking-wider text-slate-500">
+                <button
+                  type="button"
+                  onClick={() => toggleSection(section.title)}
+                  className="flex w-full items-center justify-between px-3 py-2 text-xs font-semibold uppercase tracking-wider text-slate-500 hover:text-slate-300"
+                >
                   <span>{section.title}</span>
                   <motion.span
                     className="inline-flex"
@@ -228,7 +281,7 @@ export function AdminSidebar({ isOpen = true, onClose }: AdminSidebarProps) {
                   >
                     <ChevronRight className="h-3 w-3" />
                   </motion.span>
-                </div>
+                </button>
                 <AnimatePresence initial={false}>
                   {expandedSections.has(section.title) && (
                     <motion.div

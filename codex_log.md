@@ -697,3 +697,31 @@ Xóa tính năng lưu trạng thái expand của sidebar menu. Khi mở menu, ch
 ```
 refactor(sidebar): expand only active route branch and remove persisted menu state
 ```
+
+---
+
+## Task: Khôi phục nút expand submenu sau khi bỏ lưu trạng thái
+
+### Ngày: 2026-04-10 14:12:31 +0700
+
+### Mô tả công việc:
+
+Sửa lỗi nút expand submenu không hoạt động sau lần refactor sidebar; vẫn giữ yêu cầu không lưu trạng thái expand vào localStorage.
+
+### Công việc đã làm:
+
+- Cập nhật `src/components/admin/sidebar.tsx`:
+  - Khôi phục state cục bộ `expandedSections` và `expandedChildren` để hỗ trợ thao tác expand/collapse bằng nút.
+  - Khôi phục handler `toggleSection` và `toggleChildren` cho section header và icon expand của submenu.
+  - Giữ nguyên nguyên tắc không persist localStorage.
+  - Dùng `activeExpansion` (tính từ route hiện tại) làm trạng thái mặc định và tự đồng bộ lại khi đổi trang/query, đảm bảo lúc mở trang chỉ mở nhánh tương ứng.
+
+### Kiểm tra:
+- `npm run build`: pass (27 routes, 0 error)
+
+---
+
+**Commit message:**
+```
+fix(sidebar): restore submenu expand toggle without reintroducing persisted state
+```
