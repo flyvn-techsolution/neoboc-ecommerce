@@ -15,13 +15,19 @@ import type { CreateProductInput } from "@/types/product";
 async function fetchCategories(): Promise<ProductCategory[]> {
   const res = await fetch("/api/categories?isActive=true");
   if (!res.ok) throw new Error("Không thể tải danh mục");
-  return res.json();
+  const payload = await res.json();
+  return Array.isArray(payload) ? payload : [];
 }
 
 async function fetchCollections(): Promise<ProductCollection[]> {
   const res = await fetch("/api/collections?isActive=true");
   if (!res.ok) throw new Error("Không thể tải bộ sưu tập");
-  return res.json();
+  const payload = await res.json();
+  return Array.isArray(payload)
+    ? payload
+    : Array.isArray(payload?.data)
+      ? payload.data
+      : [];
 }
 
 export default function EditProductPage() {

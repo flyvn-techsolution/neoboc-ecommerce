@@ -27,12 +27,12 @@ export default function NewProductPage() {
 
         if (categoriesRes.ok) {
           const cats = await categoriesRes.json();
-          setCategories(cats);
+          setCategories(Array.isArray(cats) ? cats : []);
         }
 
         if (collectionsRes.ok) {
           const colls = await collectionsRes.json();
-          setCollections(colls);
+          setCollections(Array.isArray(colls) ? colls : Array.isArray(colls?.data) ? colls.data : []);
         }
       } catch (error) {
         console.error("Error fetching data:", error);
