@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { Prisma } from "@prisma/client";
+import { toImageArray } from "@/lib/utils/format";
 
 export async function GET(
   request: NextRequest,
@@ -45,7 +46,7 @@ export async function GET(
         ? Number(product.originalPrice)
         : null,
       salePrice: product.salePrice ? Number(product.salePrice) : null,
-      images: product.images as string[],
+      images: toImageArray(product.images),
       categories: product.categories.map((cp) => cp.category),
       collections: product.collections.map((cp) => cp.collection),
     };
@@ -84,6 +85,7 @@ export async function PUT(
       collectionIds,
       variants,
     } = body;
+    const normalizedImages = images !== undefined ? toImageArray(images) : undefined;
 
     const existingProduct = await prisma.product.findUnique({
       where: { id },
@@ -130,7 +132,7 @@ export async function PUT(
                 : null
               : undefined,
           stock: stock !== undefined ? stock : undefined,
-          images: images !== undefined ? images : undefined,
+          images: normalizedImages,
           seoTitle: seoTitle !== undefined ? seoTitle || null : undefined,
           seoDescription:
             seoDescription !== undefined ? seoDescription || null : undefined,
@@ -219,7 +221,7 @@ export async function PUT(
       salePrice: updatedProduct!.salePrice
         ? Number(updatedProduct!.salePrice)
         : null,
-      images: updatedProduct!.images as string[],
+      images: toImageArray(updatedProduct!.images),
       categories: updatedProduct!.categories.map((cp) => cp.category),
       collections: updatedProduct!.collections.map((cp) => cp.collection),
     };

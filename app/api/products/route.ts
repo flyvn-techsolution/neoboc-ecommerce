@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { Prisma } from "@prisma/client";
+import { toImageArray } from "@/lib/utils/format";
 
 export async function GET(request: NextRequest) {
   try {
@@ -90,7 +91,7 @@ export async function GET(request: NextRequest) {
       price: Number(product.price),
       originalPrice: product.originalPrice ? Number(product.originalPrice) : null,
       salePrice: product.salePrice ? Number(product.salePrice) : null,
-      images: product.images as string[],
+      images: toImageArray(product.images),
       categories: product.categories.map((cp) => cp.category),
       collections: product.collections.map((cp) => cp.collection),
     }));
@@ -133,6 +134,7 @@ export async function POST(request: NextRequest) {
       collectionIds,
       variants,
     } = body;
+    const normalizedImages = toImageArray(images);
 
     if (!name || !slug || price === undefined) {
       return NextResponse.json(
@@ -161,7 +163,7 @@ export async function POST(request: NextRequest) {
         originalPrice: originalPrice ? new Prisma.Decimal(originalPrice) : null,
         salePrice: salePrice ? new Prisma.Decimal(salePrice) : null,
         stock: stock || 0,
-        images: images || [],
+        images: normalizedImages,
         seoTitle: seoTitle || null,
         seoDescription: seoDescription || null,
         isActive: isActive !== undefined ? isActive : true,
@@ -221,7 +223,7 @@ export async function POST(request: NextRequest) {
         ? Number(product.originalPrice)
         : null,
       salePrice: product.salePrice ? Number(product.salePrice) : null,
-      images: product.images as string[],
+      images: toImageArray(product.images),
       categories: product.categories.map((cp) => cp.category),
       collections: product.collections.map((cp) => cp.collection),
     };

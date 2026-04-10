@@ -238,3 +238,80 @@ Khắc phục lỗi hydration mismatch (server/client render khác nhau ở item
 ```
 fix(admin-sidebar): load sidebar client-only to prevent hydration mismatch
 ```
+
+---
+
+## Task: Fix lỗi `Failed to construct 'URL': Invalid URL` ở bảng sản phẩm
+
+### Ngày: 2026-04-10 12:29:11 +0700
+
+### Mô tả công việc:
+
+Khắc phục lỗi runtime khi render ảnh sản phẩm trong admin table do một số giá trị `images[]` không phải URL hợp lệ cho `next/image`.
+
+### Công việc đã làm:
+
+- Cập nhật `src/lib/utils/format.ts`:
+  - Thêm helper `normalizeImageSrc(src)` để chuẩn hóa nguồn ảnh trước khi render:
+    - Chấp nhận URL `http/https` hợp lệ.
+    - Chấp nhận đường dẫn local bắt đầu bằng `/`.
+    - Với path không có scheme (ví dụ `uploads/a.jpg`) tự chuẩn hóa thành path tuyệt đối (`/uploads/a.jpg`).
+    - Loại bỏ giá trị rỗng hoặc scheme không hỗ trợ.
+- Cập nhật `src/components/admin/product/product-table.tsx`:
+  - Dùng `normalizeImageSrc` để lấy ảnh đầu tiên hợp lệ từ `images`.
+  - Nếu không có ảnh hợp lệ thì fallback icon placeholder, không render `Image` với `src` lỗi.
+- Cập nhật `src/components/admin/product/product-form.tsx`:
+  - Khi thêm ảnh mới, chuẩn hóa URL bằng `normalizeImageSrc` trước khi lưu vào state.
+  - Khi preview danh sách ảnh, chỉ render `Image` nếu `normalizedUrl` hợp lệ, ngược lại hiển thị placeholder.
+
+### Kiểm tra:
+- `npm run build`: pass (25 routes, 0 error)
+
+---
+
+**Commit message:**
+```
+fix(product-images): normalize image sources to prevent next/image invalid URL crashes
+```
+
+---
+
+## Task: Fix lỗi `images?.map is not a function` do API trả `images` dạng string JSON
+
+### Ngày: 2026-04-10 12:33:21 +0700
+
+### Mô tả công việc:
+
+Khắc phục lỗi runtime ở `/admin/products` khi `images` từ API là chuỗi JSON (`"[\"/...\"]"`) thay vì mảng, dẫn tới `images?.map is not a function`.
+
+### Công việc đã làm:
+
+- Cập nhật `src/lib/utils/format.ts`:
+  - Thêm helper `toImageArray(images)` để parse/sanitize dữ liệu ảnh từ nhiều kiểu đầu vào:
+    - `string[]` hợp lệ.
+    - chuỗi JSON của mảng ảnh.
+    - chuỗi đơn lẻ.
+  - Kết hợp với `normalizeImageSrc` để chuẩn hóa path/URL và loại bỏ giá trị không hợp lệ.
+- Cập nhật `app/api/products/route.ts`:
+  - GET list: luôn trả `images` dưới dạng `string[]` bằng `toImageArray(product.images)`.
+  - POST create: chuẩn hóa `images` trước khi lưu DB để tránh tiếp tục lưu sai kiểu.
+  - Response sau create: luôn trả `images` đã parse đúng kiểu.
+- Cập nhật `app/api/products/[id]/route.ts`:
+  - GET by id: luôn trả `images` dạng `string[]`.
+  - PUT update: chuẩn hóa `images` trước khi ghi DB.
+  - Response sau update: luôn trả `images` đúng kiểu.
+- Cập nhật UI để thêm lớp an toàn:
+  - `src/components/admin/product/product-table.tsx`: dùng `toImageArray(...)` khi lấy ảnh đầu tiên.
+  - `src/components/admin/product/product-form.tsx`: khởi tạo/default `images` bằng `toImageArray(...)`.
+- Sửa nguồn seed gây sai kiểu dữ liệu:
+  - `prisma/seed.ts`: bỏ `JSON.stringify(...)` ở field `images`, lưu trực tiếp mảng JSON như schema `Json` yêu cầu.
+
+### Kiểm tra:
+- `npm run build`: pass (25 routes, 0 error)
+
+---
+
+**Commit message:**
+```
+fix(products-api): normalize images payload to array and handle legacy stringified json
+```

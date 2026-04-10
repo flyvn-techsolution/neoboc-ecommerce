@@ -154,10 +154,10 @@ async function main() {
         originalPrice: 249000,
         salePrice: 199000,
         stock: 50,
-        images: JSON.stringify([
+        images: [
           '/images/products/nailbox-co-ban-hong-1.jpg',
           '/images/products/nailbox-co-ban-hong-2.jpg',
-        ]),
+        ],
         seoTitle: 'Nailbox Cơ Bản Hồng Phấn | NeoBóc',
         seoDescription: 'Nailbox cơ bản với tông màu hồng phấn dịu dàng, phù hợp cho mọi dịp.',
         isActive: true,
@@ -172,9 +172,9 @@ async function main() {
         description: 'Nailbox cơ bản với tông màu xanh mint mát mẻ, trẻ trung.',
         price: 199000,
         stock: 45,
-        images: JSON.stringify([
+        images: [
           '/images/products/nailbox-co-ban-xanh-1.jpg',
-        ]),
+        ],
         seoTitle: 'Nailbox Cơ Bản Xanh Mint | NeoBóc',
         seoDescription: 'Nailbox cơ bản với tông màu xanh mint mát mẻ, trẻ trung.',
         isActive: true,
@@ -192,10 +192,10 @@ async function main() {
         originalPrice: 599000,
         salePrice: 499000,
         stock: 30,
-        images: JSON.stringify([
+        images: [
           '/images/products/nailbox-cao-cap-vang-1.jpg',
           '/images/products/nailbox-cao-cap-vang-2.jpg',
-        ]),
+        ],
         seoTitle: 'Nailbox Cao Cấp Vàng Hoàng Gia | NeoBóc',
         seoDescription: 'Nailbox cao cấp với thiết kế sang trọng, màu vàng hoàng gia quý phái.',
         isActive: true,
@@ -210,9 +210,9 @@ async function main() {
         description: 'Nailbox cao cấp với ánh bạc lấp lánh, thời thượng.',
         price: 549000,
         stock: 25,
-        images: JSON.stringify([
+        images: [
           '/images/products/nailbox-cao-cap-bac-1.jpg',
-        ]),
+        ],
         seoTitle: 'Nailbox Cao Cấp Bạc Luna | NeoBóc',
         seoDescription: 'Nailbox cao cấp với ánh bạc lấp lánh, thời thượng.',
         isActive: true,
@@ -228,9 +228,9 @@ async function main() {
         description: 'Thiết kế nailbox hoàn toàn theo ý tưởng của bạn với gói cơ bản.',
         price: 299000,
         stock: 100,
-        images: JSON.stringify([
+        images: [
           '/images/products/nailbox-tkr-1.jpg',
-        ]),
+        ],
         seoTitle: 'Nailbox Thiết Kế Riêng Gói Cơ Bản | NeoBóc',
         seoDescription: 'Thiết kế nailbox hoàn toàn theo ý tưởng của bạn với gói cơ bản.',
         isActive: true,
@@ -247,9 +247,9 @@ async function main() {
         originalPrice: 799000,
         salePrice: 699000,
         stock: 50,
-        images: JSON.stringify([
+        images: [
           '/images/products/nailbox-tkr-cao-cap-1.jpg',
-        ]),
+        ],
         seoTitle: 'Nailbox Thiết Kế Riêng Gói Cao Cấp | NeoBóc',
         seoDescription: 'Thiết kế nailbox độc đáo với vật liệu cao cấp, kèm tư vấn chuyên nghiệp.',
         isActive: true,
@@ -265,9 +265,9 @@ async function main() {
         description: 'Kệ đỡ nail chuyên dụng bằng nhựa cao cấp, có thể điều chỉnh.',
         price: 89000,
         stock: 80,
-        images: JSON.stringify([
+        images: [
           '/images/products/ke-do-nail-1.jpg',
-        ]),
+        ],
         seoTitle: 'Kệ Đỡ Nail Chuyên Dụng | NeoBóc',
         seoDescription: 'Kệ đỡ nail chuyên dụng bằng nhựa cao cấp, có thể điều chỉnh.',
         isActive: true,
@@ -282,9 +282,9 @@ async function main() {
         description: 'Hộp lưu trữ nailbox bằng vải nhung cao cấp, chống trầy.',
         price: 129000,
         stock: 60,
-        images: JSON.stringify([
+        images: [
           '/images/products/hop-luu-tru-1.jpg',
-        ]),
+        ],
         seoTitle: 'Hộp Lưu Trữ Nailbox | NeoBóc',
         seoDescription: 'Hộp lưu trữ nailbox bằng vải nhung cao cấp, chống trầy.',
         isActive: true,

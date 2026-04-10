@@ -72,3 +72,61 @@ export function truncate(str: string, length: number): string {
   if (str.length <= length) return str;
   return str.slice(0, length) + "...";
 }
+
+export function normalizeImageSrc(
+  src: string | null | undefined
+): string | null {
+  if (!src) return null;
+
+  const value = src.trim();
+  if (!value) return null;
+
+  if (value.startsWith("/")) return value;
+
+  const hasScheme = /^[a-zA-Z][a-zA-Z\d+\-.]*:/.test(value);
+  if (hasScheme) {
+    try {
+      const parsed = new URL(value);
+      if (parsed.protocol === "http:" || parsed.protocol === "https:") {
+        return parsed.toString();
+      }
+      return null;
+    } catch {
+      return null;
+    }
+  }
+
+  return `/${value.replace(/^\.?\/*/, "")}`;
+}
+
+export function toImageArray(images: unknown): string[] {
+  const normalizeList = (values: unknown[]): string[] =>
+    values.flatMap((value) => {
+      if (typeof value !== "string") return [];
+      const normalized = normalizeImageSrc(value);
+      return normalized ? [normalized] : [];
+    });
+
+  if (Array.isArray(images)) {
+    return normalizeList(images);
+  }
+
+  if (typeof images === "string") {
+    const trimmed = images.trim();
+    if (!trimmed) return [];
+
+    try {
+      const parsed = JSON.parse(trimmed);
+      if (Array.isArray(parsed)) {
+        return normalizeList(parsed);
+      }
+    } catch {
+      // fallback to single raw url/path below
+    }
+
+    const normalized = normalizeImageSrc(trimmed);
+    return normalized ? [normalized] : [];
+  }
+
+  return [];
+}

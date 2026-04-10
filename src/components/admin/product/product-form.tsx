@@ -20,7 +20,12 @@ import {
   ArrowLeft,
   Loader2,
 } from "lucide-react";
-import { cn, generateSlug } from "@/lib/utils/format";
+import {
+  cn,
+  generateSlug,
+  normalizeImageSrc,
+  toImageArray,
+} from "@/lib/utils/format";
 import type { Product, ProductCategory, ProductCollection, CreateProductInput } from "@/types/product";
 
 interface ProductFormData {
@@ -55,7 +60,7 @@ export function ProductForm({
   isSubmitting,
 }: ProductFormProps) {
   const router = useRouter();
-  const [images, setImages] = useState<string[]>(product?.images || []);
+  const [images, setImages] = useState<string[]>(toImageArray(product?.images));
   const [newImageUrl, setNewImageUrl] = useState("");
   const [variants, setVariants] = useState<
     Array<{
@@ -88,7 +93,7 @@ export function ProductForm({
       isActive: product?.isActive ?? true,
       categoryIds: product?.categories?.map((c) => c.id) || [],
       collectionIds: product?.collections?.map((c) => c.id) || [],
-      images: product?.images || [],
+      images: toImageArray(product?.images),
     },
   });
 
@@ -153,9 +158,11 @@ export function ProductForm({
   );
 
   const handleAddImage = () => {
-    if (newImageUrl && isValidUrl(newImageUrl)) {
-      setImages((prev) => [...prev, newImageUrl]);
-      setValue("images", [...images, newImageUrl]);
+    const normalizedImageUrl = normalizeImageSrc(newImageUrl);
+
+    if (normalizedImageUrl) {
+      setImages((prev) => [...prev, normalizedImageUrl]);
+      setValue("images", [...images, normalizedImageUrl]);
       setNewImageUrl("");
     }
   };
@@ -164,15 +171,6 @@ export function ProductForm({
     const newImages = images.filter((_, i) => i !== index);
     setImages(newImages);
     setValue("images", newImages);
-  };
-
-  const isValidUrl = (url: string) => {
-    try {
-      new URL(url);
-      return true;
-    } catch {
-      return false;
-    }
   };
 
   const handleAddVariant = () => {
@@ -393,31 +391,41 @@ export function ProductForm({
             <CardContent className="space-y-4">
               {images.length > 0 && (
                 <div className="grid grid-cols-4 gap-4">
-                  {images.map((url, index) => (
-                    <div
-                      key={index}
-                      className="relative aspect-square rounded-lg border border-slate-200 overflow-hidden bg-slate-100 group"
-                    >
-                      <Image
-                        src={url}
-                        alt={`Image ${index + 1}`}
-                        fill
-                        className="object-cover"
-                      />
-                      <button
-                        type="button"
-                        onClick={() => handleRemoveImage(index)}
-                        className="absolute top-1 right-1 h-6 w-6 rounded-full bg-red-500 text-white opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center"
+                  {images.map((url, index) => {
+                    const normalizedUrl = normalizeImageSrc(url);
+
+                    return (
+                      <div
+                        key={index}
+                        className="relative aspect-square rounded-lg border border-slate-200 overflow-hidden bg-slate-100 group"
                       >
-                        <X className="h-3 w-3" />
-                      </button>
-                      {index === 0 && (
-                        <span className="absolute bottom-1 left-1 bg-brand-500 text-white text-xs px-1.5 py-0.5 rounded">
-                          Ảnh chính
-                        </span>
-                      )}
-                    </div>
-                  ))}
+                        {normalizedUrl ? (
+                          <Image
+                            src={normalizedUrl}
+                            alt={`Image ${index + 1}`}
+                            fill
+                            className="object-cover"
+                          />
+                        ) : (
+                          <div className="flex h-full w-full items-center justify-center">
+                            <ImageIcon className="h-5 w-5 text-slate-400" />
+                          </div>
+                        )}
+                        <button
+                          type="button"
+                          onClick={() => handleRemoveImage(index)}
+                          className="absolute top-1 right-1 h-6 w-6 rounded-full bg-red-500 text-white opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center"
+                        >
+                          <X className="h-3 w-3" />
+                        </button>
+                        {index === 0 && (
+                          <span className="absolute bottom-1 left-1 bg-brand-500 text-white text-xs px-1.5 py-0.5 rounded">
+                            Ảnh chính
+                          </span>
+                        )}
+                      </div>
+                    );
+                  })}
                 </div>
               )}
 
