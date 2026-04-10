@@ -551,3 +551,37 @@ feat(forms): auto-generate category and collection slug from name
 ```
 refactor(category-form): move SEO section to right sidebar below status
 ```
+
+---
+
+## Task: Xóa section Trạng thái và chuyển action bar category-form giống collection-form
+
+### Ngày: 2026-04-10 14:00:01 +0700
+
+### Mô tả công việc:
+
+Điều chỉnh `category-form` theo yêu cầu:
+- Xóa section `Trạng thái`.
+- Đưa switch trạng thái lên cạnh nút lưu ở phần action bar phía trên.
+- Dùng cụm nút `Quay lại` và `Lưu` giống cấu trúc của `collection-form`.
+
+### Công việc đã làm:
+
+- Cập nhật `src/components/admin/category/category-form.tsx`:
+  - Thêm action bar phía trên form, gồm:
+    - Nút `Quay lại` kiểu `ghost` ở bên trái.
+    - Switch `isActive` + label trạng thái (`Đang hiển thị` / `Đã ẩn`) cạnh nút lưu ở bên phải.
+    - Nút `Lưu phân loại`.
+  - Xóa hoàn toàn card `Trạng thái` ở cột phải.
+  - Xóa thanh action cuối form (border top) để tránh trùng cụm nút điều khiển.
+  - Giữ nguyên section `SEO` ở cột phải.
+
+### Kiểm tra:
+- `npm run build`: pass (27 routes, 0 error)
+
+---
+
+**Commit message:**
+```
+refactor(category-form): replace status card with top action bar like collection form
+```

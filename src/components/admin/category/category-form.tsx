@@ -113,6 +113,42 @@ export function CategoryForm({
 
   return (
     <form onSubmit={handleFormSubmit} className="space-y-6">
+      <div className="flex items-center justify-between">
+        <Button
+          type="button"
+          variant="ghost"
+          onClick={() => router.back()}
+        >
+          <ArrowLeft className="h-4 w-4" />
+          Quay lại
+        </Button>
+        <div className="flex items-center gap-4">
+          <div className="flex items-center gap-2">
+            <Switch
+              id="isActive"
+              checked={watch("isActive")}
+              onCheckedChange={(checked) => setValue("isActive", checked)}
+            />
+            <Label htmlFor="isActive" className="cursor-pointer">
+              {watch("isActive") ? "Đang hiển thị" : "Đã ẩn"}
+            </Label>
+          </div>
+          <Button type="submit" disabled={isSubmitting}>
+            {isSubmitting ? (
+              <>
+                <Loader2 className="h-4 w-4 animate-spin" />
+                Đang lưu...
+              </>
+            ) : (
+              <>
+                <Save className="h-4 w-4" />
+                Lưu phân loại
+              </>
+            )}
+          </Button>
+        </div>
+      </div>
+
       <div className="grid gap-6 lg:grid-cols-3">
         <div className="lg:col-span-2 space-y-6">
           <Card>
@@ -170,26 +206,6 @@ export function CategoryForm({
         <div className="space-y-6">
           <Card>
             <CardHeader>
-              <CardTitle>Trạng thái</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="flex items-center justify-between">
-                <div className="space-y-0.5">
-                  <Label>Hiển thị</Label>
-                  <p className="text-sm text-slate-500">
-                    Phân loại sẽ hiển thị trên cửa hàng
-                  </p>
-                </div>
-                <Switch
-                  checked={watchedFields.isActive}
-                  onCheckedChange={(checked) => setValue("isActive", checked)}
-                />
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader>
               <CardTitle>SEO</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
@@ -220,30 +236,6 @@ export function CategoryForm({
             </CardContent>
           </Card>
         </div>
-      </div>
-
-      <div className="flex items-center justify-end gap-4 border-t pt-6">
-        <Button
-          type="button"
-          variant="outline"
-          onClick={() => router.back()}
-        >
-          <ArrowLeft className="mr-2 h-4 w-4" />
-          Quay lại
-        </Button>
-        <Button type="submit" disabled={isSubmitting}>
-          {isSubmitting ? (
-            <>
-              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              Đang lưu...
-            </>
-          ) : (
-            <>
-              <Save className="mr-2 h-4 w-4" />
-              Lưu phân loại
-            </>
-          )}
-        </Button>
       </div>
     </form>
   );
