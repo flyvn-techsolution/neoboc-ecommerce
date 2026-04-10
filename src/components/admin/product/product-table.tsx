@@ -40,7 +40,12 @@ import {
   Eye,
   EyeOff,
 } from "lucide-react";
-import { cn, formatCurrency, toImageArray } from "@/lib/utils/format";
+import {
+  cn,
+  formatCurrency,
+  normalizeImageSrc,
+  toImageArray,
+} from "@/lib/utils/format";
 import type { Product, ProductFilters } from "@/types/product";
 import {
   Dialog,
@@ -110,7 +115,8 @@ export function ProductTable({
         accessorKey: "images",
         header: "Hình ảnh",
         cell: ({ row }) => {
-          const firstImage = toImageArray(row.original.images)[0] ?? null;
+          const featuredImage = normalizeImageSrc(row.original.featuredImage);
+          const firstImage = featuredImage ?? toImageArray(row.original.images)[0] ?? null;
           return (
             <div className="relative h-12 w-12 overflow-hidden rounded-lg border border-slate-200 bg-slate-100">
               {firstImage ? (

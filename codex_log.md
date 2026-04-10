@@ -433,3 +433,31 @@ Mỗi sản phẩm có nhiều ảnh, cần cho phép chọn 1 ảnh làm featur
 ```
 feat(product-images): add featured image selection with radio button in dropzone
 ```
+
+---
+
+## Task: Hiển thị ảnh featuredImage trong product-table
+
+### Ngày: 2026-04-10 13:11:19 +0700
+
+### Mô tả công việc:
+
+Đảm bảo cột ảnh trong bảng sản phẩm ưu tiên hiển thị `featuredImage` (ảnh chính) thay vì chỉ lấy ảnh đầu tiên từ mảng `images`.
+
+### Công việc đã làm:
+
+- Cập nhật `src/components/admin/product/product-table.tsx`:
+  - Import thêm `normalizeImageSrc`.
+  - Trong cell cột `Hình ảnh`:
+    - Ưu tiên lấy ảnh từ `row.original.featuredImage`.
+    - Nếu `featuredImage` không có hoặc không hợp lệ thì fallback về ảnh đầu tiên của `images` để tương thích dữ liệu cũ.
+
+### Kiểm tra:
+- `npm run build`: pass (26 routes, 0 error)
+
+---
+
+**Commit message:**
+```
+fix(product-table): prioritize featuredImage for thumbnail preview
+```
