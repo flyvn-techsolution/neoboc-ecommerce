@@ -614,3 +614,32 @@ refactor(category-form): replace status card with top action bar like collection
 ```
 refactor(sidebar): merge category menu into product section and move orders above products
 ```
+
+---
+
+## Task: Xóa menu "Thêm sản phẩm mới" trong sidebar
+
+### Ngày: 2026-04-10 14:04:34 +0700
+
+### Mô tả công việc:
+
+Xóa item menu `Thêm sản phẩm mới` khỏi section `Sản phẩm` trong sidebar admin.
+
+### Công việc đã làm:
+
+- Cập nhật `src/lib/constants.ts`:
+  - Xóa item:
+    - `title: "Thêm sản phẩm mới"`
+    - `href: "/admin/products/new"`
+    - `icon: Package`
+  - Giữ nguyên các item còn lại trong section `Sản phẩm`.
+
+### Kiểm tra:
+- `npm run build`: pass (27 routes, 0 error)
+
+---
+
+**Commit message:**
+```
+refactor(sidebar): remove create-product menu item
+```

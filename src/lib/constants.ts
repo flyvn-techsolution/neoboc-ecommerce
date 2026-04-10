@@ -202,11 +202,6 @@ export const adminNavSections: NavSection[] = [
         icon: Package,
       },
       {
-        title: "Thêm sản phẩm mới",
-        href: "/admin/products/new",
-        icon: Package,
-      },
-      {
         title: "Bộ sưu tập",
         href: "/admin/collections",
         icon: FolderTree,
