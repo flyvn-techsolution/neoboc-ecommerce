@@ -15,10 +15,10 @@ export interface ProductCollection {
 export interface ProductVariant {
   id: string;
   productId: string;
-  variantName: string;
-  optionValue: string;
+  name: string;
   sku: string | null;
   stock: number;
+  image: string | null;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -75,7 +75,6 @@ export interface CreateProductInput {
   price: number;
   originalPrice?: number;
   salePrice?: number;
-  stock?: number;
   images?: string[];
   featuredImage?: string;
   seoTitle?: string;

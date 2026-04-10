@@ -3,6 +3,13 @@ import { prisma } from "@/lib/prisma";
 import { Prisma } from "@prisma/client";
 import { toImageArray } from "@/lib/utils/format";
 
+interface ProductVariantInput {
+  name: string;
+  sku?: string | null;
+  stock?: number;
+  image?: string | null;
+}
+
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
@@ -45,18 +52,72 @@ export async function GET(request: NextRequest) {
       };
     }
 
+    const skip = (page - 1) * pageSize;
+    const includeArgs = {
+      categories: {
+        include: {
+          category: true,
+        },
+      },
+      collections: {
+        include: {
+          collection: true,
+        },
+      },
+      variants: true,
+      _count: {
+        select: {
+          orderItems: true,
+        },
+      },
+    } satisfies Prisma.ProductInclude;
+
+    if (sortBy === "stock") {
+      const products = await prisma.product.findMany({
+        where,
+        include: includeArgs,
+      });
+
+      const formattedProducts = products
+        .map((product) => ({
+          ...product,
+          price: Number(product.price),
+          originalPrice: product.originalPrice
+            ? Number(product.originalPrice)
+            : null,
+          salePrice: product.salePrice ? Number(product.salePrice) : null,
+          stock: product.variants.reduce((sum, variant) => sum + variant.stock, 0),
+          images: toImageArray(product.images),
+          featuredImage: product.featuredImage || null,
+          categories: product.categories.map((cp) => cp.category),
+          collections: product.collections.map((cp) => cp.collection),
+        }))
+        .sort((a, b) =>
+          sortOrder === "asc" ? a.stock - b.stock : b.stock - a.stock
+        );
+
+      const pagedProducts = formattedProducts.slice(skip, skip + pageSize);
+      const total = formattedProducts.length;
+
+      return NextResponse.json({
+        data: pagedProducts,
+        pagination: {
+          page,
+          pageSize,
+          total,
+          totalPages: Math.ceil(total / pageSize),
+        },
+      });
+    }
+
     const orderBy: Prisma.ProductOrderByWithRelationInput = {};
     if (sortBy === "price") {
       orderBy.price = sortOrder as "asc" | "desc";
-    } else if (sortBy === "stock") {
-      orderBy.stock = sortOrder as "asc" | "desc";
     } else if (sortBy === "name") {
       orderBy.name = sortOrder as "asc" | "desc";
     } else {
       orderBy.createdAt = sortOrder as "asc" | "desc";
     }
-
-    const skip = (page - 1) * pageSize;
 
     const [products, total] = await Promise.all([
       prisma.product.findMany({
@@ -64,24 +125,7 @@ export async function GET(request: NextRequest) {
         orderBy,
         skip,
         take: pageSize,
-        include: {
-          categories: {
-            include: {
-              category: true,
-            },
-          },
-          collections: {
-            include: {
-              collection: true,
-            },
-          },
-          variants: true,
-          _count: {
-            select: {
-              orderItems: true,
-            },
-          },
-        },
+        include: includeArgs,
       }),
       prisma.product.count({ where }),
     ]);
@@ -91,6 +135,7 @@ export async function GET(request: NextRequest) {
       price: Number(product.price),
       originalPrice: product.originalPrice ? Number(product.originalPrice) : null,
       salePrice: product.salePrice ? Number(product.salePrice) : null,
+      stock: product.variants.reduce((sum, variant) => sum + variant.stock, 0),
       images: toImageArray(product.images),
       featuredImage: product.featuredImage || null,
       categories: product.categories.map((cp) => cp.category),
@@ -126,7 +171,6 @@ export async function POST(request: NextRequest) {
       price,
       originalPrice,
       salePrice,
-      stock,
       images,
       seoTitle,
       seoDescription,
@@ -164,7 +208,6 @@ export async function POST(request: NextRequest) {
         price: new Prisma.Decimal(price),
         originalPrice: originalPrice ? new Prisma.Decimal(originalPrice) : null,
         salePrice: salePrice ? new Prisma.Decimal(salePrice) : null,
-        stock: stock || 0,
         images: normalizedImages,
         featuredImage: featuredImage || null,
         seoTitle: seoTitle || null,
@@ -190,16 +233,11 @@ export async function POST(request: NextRequest) {
           : undefined,
         variants: variants?.length
           ? {
-              create: variants.map((variant: {
-                variantName: string;
-                optionValue: string;
-                sku?: string;
-                stock?: number;
-              }) => ({
-                variantName: variant.variantName,
-                optionValue: variant.optionValue,
-                sku: variant.sku,
-                stock: variant.stock || 0,
+              create: variants.map((variant: ProductVariantInput) => ({
+                name: variant.name,
+                sku: variant.sku?.trim() || null,
+                stock: Math.max(0, Number(variant.stock) || 0),
+                image: variant.image?.trim() || null,
               })),
             }
           : undefined,
@@ -226,6 +264,7 @@ export async function POST(request: NextRequest) {
         ? Number(product.originalPrice)
         : null,
       salePrice: product.salePrice ? Number(product.salePrice) : null,
+      stock: product.variants.reduce((sum, variant) => sum + variant.stock, 0),
       images: toImageArray(product.images),
       featuredImage: product.featuredImage,
       categories: product.categories.map((cp) => cp.category),

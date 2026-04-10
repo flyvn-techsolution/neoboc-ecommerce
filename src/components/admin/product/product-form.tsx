@@ -15,14 +15,22 @@ import {
   ArrowLeft,
   Loader2,
   Plus,
+  ImageIcon,
 } from "lucide-react";
 import {
   cn,
   generateSlug,
+  normalizeImageSrc,
   toImageArray,
 } from "@/lib/utils/format";
 import { Dropzone } from "@/components/ui/dropzone";
 import type { Product, ProductCategory, ProductCollection, CreateProductInput } from "@/types/product";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 
 interface ProductFormData {
   name: string;
@@ -31,13 +39,20 @@ interface ProductFormData {
   price: number;
   originalPrice?: number;
   salePrice?: number;
-  stock: number;
   seoTitle: string;
   seoDescription: string;
   isActive: boolean;
   categoryIds: string[];
   collectionIds: string[];
   images: string[];
+}
+
+interface ProductVariantFormState {
+  id?: string;
+  name: string;
+  sku: string;
+  stock: number;
+  image: string | null;
 }
 
 interface ProductFormProps {
@@ -60,15 +75,16 @@ export function ProductForm({
   const [featuredImage, setFeaturedImage] = useState<string | null>(
     product?.featuredImage || (product?.images?.length ? toImageArray(product.images)[0] : null)
   );
-  const [variants, setVariants] = useState<
-    Array<{
-      id?: string;
-      variantName: string;
-      optionValue: string;
-      sku: string | null;
-      stock: number;
-    }>
-  >(product?.variants || []);
+  const [variantImagePickerIndex, setVariantImagePickerIndex] = useState<number | null>(null);
+  const [variants, setVariants] = useState<ProductVariantFormState[]>(
+    (product?.variants || []).map((variant) => ({
+      id: variant.id,
+      name: variant.name,
+      sku: variant.sku || "",
+      stock: variant.stock,
+      image: variant.image || null,
+    }))
+  );
   const {
     register,
     handleSubmit,
@@ -85,7 +101,6 @@ export function ProductForm({
       price: product?.price || 0,
       originalPrice: product?.originalPrice ?? undefined,
       salePrice: product?.salePrice ?? undefined,
-      stock: product?.stock || 0,
       seoTitle: product?.seoTitle || "",
       seoDescription: product?.seoDescription || "",
       isActive: product?.isActive ?? true,
@@ -117,10 +132,6 @@ export function ProductForm({
       errs.price = { type: "min", message: "Giá phải lớn hơn hoặc bằng 0" };
     }
 
-    if (data.stock !== undefined && data.stock < 0) {
-      errs.stock = { type: "min", message: "Tồn kho phải là số nguyên dương" };
-    }
-
     return errs;
   };
 
@@ -147,7 +158,14 @@ export function ProductForm({
         ...data,
         images,
         featuredImage: featuredImage || undefined,
-        variants: variants.filter((v) => v.variantName && v.optionValue),
+        variants: variants
+          .filter((variant) => variant.name.trim())
+          .map((variant) => ({
+            name: variant.name.trim(),
+            sku: variant.sku.trim() || null,
+            stock: Math.max(0, Number(variant.stock) || 0),
+            image: variant.image,
+          })),
       };
       onSubmit(submitData);
     },
@@ -159,6 +177,13 @@ export function ProductForm({
   const handleImagesChange = (newUrls: string[]) => {
     setImages(newUrls);
     setValue("images", newUrls);
+    setVariants((prev) =>
+      prev.map((variant) =>
+        variant.image && !newUrls.includes(variant.image)
+          ? { ...variant, image: null }
+          : variant
+      )
+    );
   };
 
   const handleFeaturedChange = (url: string | null) => {
@@ -168,24 +193,55 @@ export function ProductForm({
   const handleAddVariant = () => {
     setVariants((prev) => [
       ...prev,
-      { variantName: "", optionValue: "", sku: "", stock: 0 },
+      { name: "", sku: "", stock: 0, image: null },
     ]);
   };
 
   const handleRemoveVariant = (index: number) => {
     setVariants((prev) => prev.filter((_, i) => i !== index));
+    setVariantImagePickerIndex((prev) => {
+      if (prev === null) return null;
+      if (prev === index) return null;
+      return prev > index ? prev - 1 : prev;
+    });
   };
 
   const handleVariantChange = (
     index: number,
-    field: string,
-    value: string | number
+    field: keyof ProductVariantFormState,
+    value: string | number | null
   ) => {
     setVariants((prev) =>
       prev.map((v, i) =>
         i === index ? { ...v, [field]: value } : v
       )
     );
+  };
+
+  const totalVariantStock = variants.reduce(
+    (sum, variant) => sum + Math.max(0, Number(variant.stock) || 0),
+    0
+  );
+  const selectedVariant =
+    variantImagePickerIndex !== null ? variants[variantImagePickerIndex] : null;
+
+  const handleOpenVariantImagePicker = (index: number) => {
+    setVariantImagePickerIndex(index);
+  };
+
+  const handleCloseVariantImagePicker = () => {
+    setVariantImagePickerIndex(null);
+  };
+
+  const handleSelectVariantImage = (imageUrl: string) => {
+    if (variantImagePickerIndex === null) return;
+    handleVariantChange(variantImagePickerIndex, "image", imageUrl);
+    handleCloseVariantImagePicker();
+  };
+
+  const handleClearVariantImage = () => {
+    if (variantImagePickerIndex === null) return;
+    handleVariantChange(variantImagePickerIndex, "image", null);
   };
 
   const handleCategoryToggle = (categoryId: string) => {
@@ -354,23 +410,9 @@ export function ProductForm({
                   />
                 </div>
               </div>
-
-              <div>
-                <Label htmlFor="stock">Số lượng tồn kho</Label>
-                <Input
-                  id="stock"
-                  type="number"
-                  min="0"
-                  {...register("stock", { valueAsNumber: true })}
-                  className={cn(
-                    errors.stock && "border-red-500 focus-visible:ring-red-500"
-                  )}
-                />
-                {errors.stock && (
-                  <p className="mt-1 text-sm text-red-500">
-                    {errors.stock.message}
-                  </p>
-                )}
+              <div className="rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-700">
+                Tồn kho sản phẩm được tính từ biến thể:{" "}
+                <span className="font-semibold">{totalVariantStock}</span>
               </div>
             </CardContent>
           </Card>
@@ -421,22 +463,12 @@ export function ProductForm({
                       className="grid gap-4 sm:grid-cols-5 items-end border border-slate-200 rounded-lg p-4"
                     >
                       <div>
-                        <Label className="text-xs">Loại biến thể</Label>
+                        <Label className="text-xs">Tên biến thể</Label>
                         <Input
-                          placeholder="VD: Màu sắc"
-                          value={variant.variantName}
+                          placeholder="VD: Nhỏ (S)"
+                          value={variant.name}
                           onChange={(e) =>
-                            handleVariantChange(index, "variantName", e.target.value)
-                          }
-                        />
-                      </div>
-                      <div>
-                        <Label className="text-xs">Giá trị</Label>
-                        <Input
-                          placeholder="VD: Đỏ"
-                          value={variant.optionValue}
-                          onChange={(e) =>
-                            handleVariantChange(index, "optionValue", e.target.value)
+                            handleVariantChange(index, "name", e.target.value)
                           }
                         />
                       </div>
@@ -444,7 +476,7 @@ export function ProductForm({
                         <Label className="text-xs">SKU</Label>
                         <Input
                           placeholder="Mã SKU"
-                          value={variant.sku || ""}
+                          value={variant.sku}
                           onChange={(e) =>
                             handleVariantChange(index, "sku", e.target.value)
                           }
@@ -464,6 +496,43 @@ export function ProductForm({
                             )
                           }
                         />
+                      </div>
+                      <div>
+                        <Label className="text-xs">Ảnh biến thể</Label>
+                        {variant.image ? (
+                          <button
+                            type="button"
+                            onClick={() => handleOpenVariantImagePicker(index)}
+                            className="group flex w-full items-center gap-2 rounded-md border border-slate-200 bg-white p-2 text-left transition-colors hover:border-brand-300"
+                          >
+                            <div className="relative h-10 w-10 flex-shrink-0 overflow-hidden rounded border border-slate-200 bg-slate-100">
+                              <img
+                                src={normalizeImageSrc(variant.image) || variant.image}
+                                alt={variant.name || "Variant image"}
+                                className="h-full w-full object-cover"
+                              />
+                            </div>
+                            <span className="text-xs text-slate-600 group-hover:text-brand-600">
+                              Chọn lại ảnh
+                            </span>
+                          </button>
+                        ) : (
+                          <Button
+                            type="button"
+                            variant="outline"
+                            className="w-full"
+                            disabled={images.length === 0}
+                            onClick={() => handleOpenVariantImagePicker(index)}
+                          >
+                            <ImageIcon className="h-4 w-4" />
+                            Chọn ảnh
+                          </Button>
+                        )}
+                        {images.length === 0 && (
+                          <p className="mt-1 text-xs text-slate-500">
+                            Cần thêm ảnh sản phẩm trước khi chọn ảnh biến thể.
+                          </p>
+                        )}
                       </div>
                       <Button
                         type="button"
@@ -573,6 +642,73 @@ export function ProductForm({
           </Card>
         </div>
       </div>
+
+      <Dialog
+        open={variantImagePickerIndex !== null}
+        onOpenChange={(open) => {
+          if (!open) {
+            handleCloseVariantImagePicker();
+          }
+        }}
+      >
+        <DialogContent className="sm:max-w-2xl">
+          <DialogHeader>
+            <DialogTitle>Chọn ảnh cho biến thể</DialogTitle>
+          </DialogHeader>
+          {images.length === 0 ? (
+            <p className="text-sm text-slate-500">
+              Chưa có ảnh sản phẩm để chọn.
+            </p>
+          ) : (
+            <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+              {images.map((imageUrl) => {
+                const isSelected = selectedVariant?.image === imageUrl;
+                return (
+                  <button
+                    key={imageUrl}
+                    type="button"
+                    onClick={() => handleSelectVariantImage(imageUrl)}
+                    className={cn(
+                      "overflow-hidden rounded-lg border bg-white text-left transition-colors",
+                      isSelected
+                        ? "border-brand-500 ring-2 ring-brand-200"
+                        : "border-slate-200 hover:border-brand-300"
+                    )}
+                  >
+                    <div className="relative aspect-square w-full overflow-hidden bg-slate-100">
+                      <img
+                        src={normalizeImageSrc(imageUrl) || imageUrl}
+                        alt="Ảnh sản phẩm"
+                        className="h-full w-full object-cover"
+                      />
+                    </div>
+                    <div className="truncate px-2 py-1 text-xs text-slate-600">
+                      {imageUrl}
+                    </div>
+                  </button>
+                );
+              })}
+            </div>
+          )}
+          <div className="flex items-center justify-end gap-2">
+            <Button
+              type="button"
+              variant="outline"
+              onClick={handleClearVariantImage}
+              disabled={!selectedVariant?.image}
+            >
+              Xóa ảnh
+            </Button>
+            <Button
+              type="button"
+              variant="outline"
+              onClick={handleCloseVariantImagePicker}
+            >
+              Đóng
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </form>
   );
 }

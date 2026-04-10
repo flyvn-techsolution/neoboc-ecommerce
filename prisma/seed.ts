@@ -153,7 +153,6 @@ async function main() {
         price: 199000,
         originalPrice: 249000,
         salePrice: 199000,
-        stock: 50,
         images: [
           '/images/products/nailbox-co-ban-hong-1.jpg',
           '/images/products/nailbox-co-ban-hong-2.jpg',
@@ -171,7 +170,6 @@ async function main() {
         slug: 'nailbox-co-ban-xanh',
         description: 'Nailbox cơ bản với tông màu xanh mint mát mẻ, trẻ trung.',
         price: 199000,
-        stock: 45,
         images: [
           '/images/products/nailbox-co-ban-xanh-1.jpg',
         ],
@@ -191,7 +189,6 @@ async function main() {
         price: 499000,
         originalPrice: 599000,
         salePrice: 499000,
-        stock: 30,
         images: [
           '/images/products/nailbox-cao-cap-vang-1.jpg',
           '/images/products/nailbox-cao-cap-vang-2.jpg',
@@ -209,7 +206,6 @@ async function main() {
         slug: 'nailbox-cao-cap-bac',
         description: 'Nailbox cao cấp với ánh bạc lấp lánh, thời thượng.',
         price: 549000,
-        stock: 25,
         images: [
           '/images/products/nailbox-cao-cap-bac-1.jpg',
         ],
@@ -227,7 +223,6 @@ async function main() {
         slug: 'nailbox-thiet-ke-rieng-co-ban',
         description: 'Thiết kế nailbox hoàn toàn theo ý tưởng của bạn với gói cơ bản.',
         price: 299000,
-        stock: 100,
         images: [
           '/images/products/nailbox-tkr-1.jpg',
         ],
@@ -246,7 +241,6 @@ async function main() {
         price: 699000,
         originalPrice: 799000,
         salePrice: 699000,
-        stock: 50,
         images: [
           '/images/products/nailbox-tkr-cao-cap-1.jpg',
         ],
@@ -264,7 +258,6 @@ async function main() {
         slug: 'ke-do-nail-chuyen-dung',
         description: 'Kệ đỡ nail chuyên dụng bằng nhựa cao cấp, có thể điều chỉnh.',
         price: 89000,
-        stock: 80,
         images: [
           '/images/products/ke-do-nail-1.jpg',
         ],
@@ -281,7 +274,6 @@ async function main() {
         slug: 'hop-luu-tru-nail',
         description: 'Hộp lưu trữ nailbox bằng vải nhung cao cấp, chống trầy.',
         price: 129000,
-        stock: 60,
         images: [
           '/images/products/hop-luu-tru-1.jpg',
         ],
@@ -306,8 +298,8 @@ async function main() {
       create: {
         sku: 'NBH-S',
         productId: prodCoBanHong.id,
-        variantName: 'Kích thước',
-        optionValue: 'Nhỏ (S)',
+        name: 'Nhỏ (S)',
+        image: '/images/products/nailbox-co-ban-hong-1.jpg',
         stock: 20,
       },
     }),
@@ -317,8 +309,8 @@ async function main() {
       create: {
         sku: 'NBH-M',
         productId: prodCoBanHong.id,
-        variantName: 'Kích thước',
-        optionValue: 'Vừa (M)',
+        name: 'Vừa (M)',
+        image: '/images/products/nailbox-co-ban-hong-1.jpg',
         stock: 20,
       },
     }),
@@ -328,8 +320,8 @@ async function main() {
       create: {
         sku: 'NBH-L',
         productId: prodCoBanHong.id,
-        variantName: 'Kích thước',
-        optionValue: 'Lớn (L)',
+        name: 'Lớn (L)',
+        image: '/images/products/nailbox-co-ban-hong-2.jpg',
         stock: 10,
       },
     }),
@@ -340,8 +332,8 @@ async function main() {
       create: {
         sku: 'NBM-S',
         productId: prodCoBanXanh.id,
-        variantName: 'Kích thước',
-        optionValue: 'Nhỏ (S)',
+        name: 'Nhỏ (S)',
+        image: '/images/products/nailbox-co-ban-xanh-1.jpg',
         stock: 15,
       },
     }),
@@ -351,8 +343,8 @@ async function main() {
       create: {
         sku: 'NBM-M',
         productId: prodCoBanXanh.id,
-        variantName: 'Kích thước',
-        optionValue: 'Vừa (M)',
+        name: 'Vừa (M)',
+        image: '/images/products/nailbox-co-ban-xanh-1.jpg',
         stock: 20,
       },
     }),
@@ -362,8 +354,8 @@ async function main() {
       create: {
         sku: 'NBM-L',
         productId: prodCoBanXanh.id,
-        variantName: 'Kích thước',
-        optionValue: 'Lớn (L)',
+        name: 'Lớn (L)',
+        image: '/images/products/nailbox-co-ban-xanh-1.jpg',
         stock: 10,
       },
     }),
@@ -374,8 +366,8 @@ async function main() {
       create: {
         sku: 'NCV-S',
         productId: prodCaoCapVang.id,
-        variantName: 'Kích thước',
-        optionValue: 'Nhỏ (S)',
+        name: 'Nhỏ (S)',
+        image: '/images/products/nailbox-cao-cap-vang-1.jpg',
         stock: 10,
       },
     }),
@@ -385,8 +377,8 @@ async function main() {
       create: {
         sku: 'NCV-M',
         productId: prodCaoCapVang.id,
-        variantName: 'Kích thước',
-        optionValue: 'Vừa (M)',
+        name: 'Vừa (M)',
+        image: '/images/products/nailbox-cao-cap-vang-1.jpg',
         stock: 12,
       },
     }),
@@ -396,8 +388,8 @@ async function main() {
       create: {
         sku: 'NCV-L',
         productId: prodCaoCapVang.id,
-        variantName: 'Kích thước',
-        optionValue: 'Lớn (L)',
+        name: 'Lớn (L)',
+        image: '/images/products/nailbox-cao-cap-vang-2.jpg',
         stock: 8,
       },
     }),

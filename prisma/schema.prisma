@@ -73,7 +73,6 @@ model Product {
   price          Decimal   @db.Decimal(12, 2)
   originalPrice  Decimal?  @db.Decimal(12, 2)
   salePrice      Decimal?  @db.Decimal(12, 2)
-  stock          Int       @default(0)
   images         Json      @default("[]") // Mảng URL ảnh
   featuredImage  String?   @map("featured_image") // URL ảnh chính (featured)
   seoTitle       String?   @map("seo_title")
@@ -98,18 +97,18 @@ model Product {
 // ============================================
 
 model ProductVariant {
-  id            String   @id @default(uuid())
-  productId     String   @map("product_id")
-  variantName   String   @map("variant_name")  // vd: "Màu sắc"
-  optionValue   String   @map("option_value")   // vd: "Đỏ"
-  sku           String?  @unique
-  stock         Int      @default(0)
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
+  id         String   @id @default(uuid())
+  productId  String   @map("product_id")
+  name       String
+  sku        String?  @unique
+  stock      Int      @default(0)
+  image      String?
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
 
-  product       Product       @relation(fields: [productId], references: [id], onDelete: Cascade)
-  orderItems    OrderItem[]
-  cartItems     CartItem[]
+  product    Product   @relation(fields: [productId], references: [id], onDelete: Cascade)
+  orderItems OrderItem[]
+  cartItems  CartItem[]
 
   @@index([productId])
   @@map("product_variants")

@@ -3,6 +3,14 @@ import { prisma } from "@/lib/prisma";
 import { Prisma } from "@prisma/client";
 import { toImageArray } from "@/lib/utils/format";
 
+interface ProductVariantInput {
+  id?: string;
+  name: string;
+  sku?: string | null;
+  stock?: number;
+  image?: string | null;
+}
+
 export async function GET(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
@@ -46,6 +54,7 @@ export async function GET(
         ? Number(product.originalPrice)
         : null,
       salePrice: product.salePrice ? Number(product.salePrice) : null,
+      stock: product.variants.reduce((sum, variant) => sum + variant.stock, 0),
       images: toImageArray(product.images),
       featuredImage: product.featuredImage,
       categories: product.categories.map((cp) => cp.category),
@@ -77,7 +86,6 @@ export async function PUT(
       price,
       originalPrice,
       salePrice,
-      stock,
       images,
       seoTitle,
       seoDescription,
@@ -133,7 +141,6 @@ export async function PUT(
                 ? new Prisma.Decimal(salePrice)
                 : null
               : undefined,
-          stock: stock !== undefined ? stock : undefined,
           images: normalizedImages,
           featuredImage: featuredImage !== undefined ? (featuredImage || null) : undefined,
           seoTitle: seoTitle !== undefined ? seoTitle || null : undefined,
@@ -180,18 +187,12 @@ export async function PUT(
 
         if (variants?.length) {
           await tx.productVariant.createMany({
-            data: variants.map((variant: {
-              id?: string;
-              variantName: string;
-              optionValue: string;
-              sku?: string;
-              stock?: number;
-            }) => ({
+            data: variants.map((variant: ProductVariantInput) => ({
               productId: id,
-              variantName: variant.variantName,
-              optionValue: variant.optionValue,
-              sku: variant.sku,
-              stock: variant.stock || 0,
+              name: variant.name,
+              sku: variant.sku?.trim() || null,
+              stock: Math.max(0, Number(variant.stock) || 0),
+              image: variant.image?.trim() || null,
             })),
           });
         }
@@ -224,6 +225,7 @@ export async function PUT(
       salePrice: updatedProduct!.salePrice
         ? Number(updatedProduct!.salePrice)
         : null,
+      stock: updatedProduct!.variants.reduce((sum, variant) => sum + variant.stock, 0),
       images: toImageArray(updatedProduct!.images),
       featuredImage: updatedProduct!.featuredImage,
       categories: updatedProduct!.categories.map((cp) => cp.category),

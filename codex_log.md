@@ -759,3 +759,74 @@ fix(sidebar): restore submenu expand toggle without reintroducing persisted stat
 ```
 feat(product-form): load all categories and collections instead of active-only
 ```
+
+---
+
+## Task: Cập nhật DB và product-form theo mô hình biến thể mới + tồn kho tổng
+
+### Ngày: 2026-04-10 14:27:27 +0700
+
+### Mô tả công việc:
+
+Refactor dữ liệu sản phẩm theo yêu cầu mới:
+- Biến thể không còn `loại biến thể + giá trị`, chỉ còn `tên biến thể`, `SKU`, `tồn kho`, `ảnh biến thể`.
+- Bổ sung chọn ảnh biến thể từ danh sách ảnh đã có của sản phẩm trong `product-form`.
+- Bỏ tồn kho cấp sản phẩm; tồn kho sản phẩm được tính bằng tổng tồn kho các biến thể.
+
+### Công việc đã làm:
+
+- Cập nhật schema Prisma:
+  - `prisma/schema.prisma`:
+    - Xóa field `stock` khỏi model `Product`.
+    - Cập nhật model `ProductVariant`:
+      - Xóa `variantName`, `optionValue`.
+      - Thêm `name` và `image`.
+      - Giữ `sku`, `stock`.
+- Thêm migration DB:
+  - `prisma/migrations/20260410142500_variant_image_and_remove_product_stock/migration.sql`:
+    - Thêm cột `name`, migrate dữ liệu từ `option_value/variant_name`.
+    - Thêm cột `image`.
+    - Xóa cột `variant_name`, `option_value`.
+    - Xóa cột `stock` của bảng `products`.
+- Cập nhật API sản phẩm:
+  - `app/api/products/route.ts`:
+    - Xử lý biến thể theo cấu trúc mới (`name`, `sku`, `stock`, `image`).
+    - Không nhận/ghi `product.stock` nữa.
+    - Trả `stock` dạng computed = tổng `variants.stock`.
+    - Với sort theo `stock`: sort theo tồn kho tổng computed rồi mới phân trang.
+  - `app/api/products/[id]/route.ts`:
+    - Cập nhật PUT theo cấu trúc biến thể mới.
+    - Bỏ update `product.stock`.
+    - Trả `stock` computed từ variants.
+- Cập nhật type:
+  - `src/types/product.ts`:
+    - `ProductVariant`: đổi sang `name`, `sku`, `stock`, `image`.
+    - `CreateProductInput`: bỏ `stock` cấp sản phẩm.
+- Cập nhật `product-form`:
+  - `src/components/admin/product/product-form.tsx`:
+    - Xóa input `Số lượng tồn kho` của sản phẩm.
+    - Thêm hiển thị `tồn kho tổng` computed từ danh sách biến thể.
+    - Đổi UI biến thể sang 4 trường:
+      - Tên biến thể
+      - SKU
+      - Tồn kho
+      - Ảnh biến thể (select từ ảnh sản phẩm đã upload)
+    - Khi ảnh sản phẩm bị xóa, tự clear `image` ở biến thể nếu ảnh đó không còn tồn tại.
+    - Payload submit biến thể theo schema mới.
+- Cập nhật dữ liệu seed:
+  - `prisma/seed.ts`:
+    - Xóa `stock` ở create product.
+    - Đổi dữ liệu `productVariant` sang `name` + `image` + `stock`.
+- Đồng bộ Prisma Client:
+  - Chạy `npx prisma generate`.
+
+### Kiểm tra:
+- `npx prisma generate`: thành công
+- `npm run build`: pass (27 routes, 0 error)
+
+---
+
+**Commit message:**
+```
+feat(product-variants): migrate to name-sku-stock-image model and derive product stock from variants
+```
