@@ -725,3 +725,37 @@ Sửa lỗi nút expand submenu không hoạt động sau lần refactor sidebar
 ```
 fix(sidebar): restore submenu expand toggle without reintroducing persisted state
 ```
+
+---
+
+## Task: Product-form load toàn bộ danh mục và bộ sưu tập (không lọc active)
+
+### Ngày: 2026-04-10 14:18:04 +0700
+
+### Mô tả công việc:
+
+Điều chỉnh luồng dữ liệu cho `product-form` để tải toàn bộ danh mục và bộ sưu tập, thay vì chỉ lấy các bản ghi `isActive=true`.
+
+### Công việc đã làm:
+
+- Cập nhật `src/lib/api/category-api.ts`:
+  - Thêm hàm `fetchAllCategories()` để lấy toàn bộ danh mục qua phân trang (lặp nhiều trang `pageSize=100`).
+- Cập nhật `src/lib/api/collection-api.ts`:
+  - Thêm hàm `fetchAllCollections()` để lấy toàn bộ bộ sưu tập qua phân trang (lặp nhiều trang `pageSize=100`).
+- Cập nhật `app/admin/(dashboard)/products/new/page.tsx`:
+  - Thay fetch trực tiếp với query `isActive=true` bằng `fetchAllCategories()` và `fetchAllCollections()`.
+  - Đồng bộ lại set state `categories`/`collections` từ dữ liệu full list.
+- Cập nhật `app/admin/(dashboard)/products/[id]/page.tsx`:
+  - Thay các hàm fetch local (đang gọi `isActive=true`) bằng `fetchAllCategories()` và `fetchAllCollections()`.
+  - Cập nhật query key React Query sang `["categories", "all"]` và `["collections", "all"]`.
+  - Dọn import không còn sử dụng sau refactor.
+
+### Kiểm tra:
+- `npm run build`: pass (27 routes, 0 error)
+
+---
+
+**Commit message:**
+```
+feat(product-form): load all categories and collections instead of active-only
+```

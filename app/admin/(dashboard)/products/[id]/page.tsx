@@ -1,6 +1,5 @@
 "use client";
 
-import { useState, useEffect } from "react";
 import { useRouter, useParams } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
 import { useToast } from "@/hooks/use-toast";
@@ -9,26 +8,9 @@ import {
   useProduct,
   useUpdateProduct,
 } from "@/lib/hooks/use-products";
-import type { ProductCategory, ProductCollection } from "@/types/product";
+import { fetchAllCategories } from "@/lib/api/category-api";
+import { fetchAllCollections } from "@/lib/api/collection-api";
 import type { CreateProductInput } from "@/types/product";
-
-async function fetchCategories(): Promise<ProductCategory[]> {
-  const res = await fetch("/api/categories?isActive=true");
-  if (!res.ok) throw new Error("Không thể tải danh mục");
-  const payload = await res.json();
-  return Array.isArray(payload) ? payload : [];
-}
-
-async function fetchCollections(): Promise<ProductCollection[]> {
-  const res = await fetch("/api/collections?isActive=true");
-  if (!res.ok) throw new Error("Không thể tải bộ sưu tập");
-  const payload = await res.json();
-  return Array.isArray(payload)
-    ? payload
-    : Array.isArray(payload?.data)
-      ? payload.data
-      : [];
-}
 
 export default function EditProductPage() {
   const router = useRouter();
@@ -39,12 +21,12 @@ export default function EditProductPage() {
 
   const { data: product, isLoading: isLoadingProduct, error: productError } = useProduct(productId);
   const { data: categoriesData, isLoading: isLoadingCategories } = useQuery({
-    queryKey: ["categories"],
-    queryFn: fetchCategories,
+    queryKey: ["categories", "all"],
+    queryFn: () => fetchAllCategories(),
   });
   const { data: collectionsData, isLoading: isLoadingCollections } = useQuery({
-    queryKey: ["collections"],
-    queryFn: fetchCollections,
+    queryKey: ["collections", "all"],
+    queryFn: () => fetchAllCollections(),
   });
 
   const handleSubmit = async (data: CreateProductInput) => {

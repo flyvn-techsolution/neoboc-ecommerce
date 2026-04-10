@@ -58,6 +58,29 @@ export async function fetchCategories(
   return handleResponse<CategoriesResponse>(response);
 }
 
+export async function fetchAllCategories(
+  filters?: Omit<CategoryFilters, "page" | "pageSize">
+): Promise<Category[]> {
+  const pageSize = 100;
+  let page = 1;
+  let totalPages = 1;
+  const allCategories: Category[] = [];
+
+  while (page <= totalPages) {
+    const response = await fetchCategories({
+      ...filters,
+      page,
+      pageSize,
+    });
+
+    allCategories.push(...response.data);
+    totalPages = response.pagination.totalPages;
+    page += 1;
+  }
+
+  return allCategories;
+}
+
 export async function fetchCategory(id: string): Promise<Category> {
   const response = await fetch(`${API_BASE}/categories/${id}`);
   return handleResponse<Category>(response);

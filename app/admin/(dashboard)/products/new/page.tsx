@@ -5,6 +5,8 @@ import { useRouter } from "next/navigation";
 import { useToast } from "@/hooks/use-toast";
 import { ProductForm } from "@/components/admin/product/product-form";
 import { useCreateProduct } from "@/lib/hooks/use-products";
+import { fetchAllCategories } from "@/lib/api/category-api";
+import { fetchAllCollections } from "@/lib/api/collection-api";
 import type { ProductCategory, ProductCollection } from "@/types/product";
 import type { CreateProductInput } from "@/types/product";
 
@@ -20,20 +22,12 @@ export default function NewProductPage() {
   useEffect(() => {
     async function fetchData() {
       try {
-        const [categoriesRes, collectionsRes] = await Promise.all([
-          fetch("/api/categories?isActive=true"),
-          fetch("/api/collections?isActive=true"),
+        const [allCategories, allCollections] = await Promise.all([
+          fetchAllCategories(),
+          fetchAllCollections(),
         ]);
-
-        if (categoriesRes.ok) {
-          const cats = await categoriesRes.json();
-          setCategories(Array.isArray(cats) ? cats : []);
-        }
-
-        if (collectionsRes.ok) {
-          const colls = await collectionsRes.json();
-          setCollections(Array.isArray(colls) ? colls : Array.isArray(colls?.data) ? colls.data : []);
-        }
+        setCategories(allCategories);
+        setCollections(allCollections);
       } catch (error) {
         console.error("Error fetching data:", error);
         toast({

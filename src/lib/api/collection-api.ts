@@ -58,6 +58,29 @@ export async function fetchCollections(
   return handleResponse<CollectionsResponse>(response);
 }
 
+export async function fetchAllCollections(
+  filters?: Omit<CollectionFilters, "page" | "pageSize">
+): Promise<Collection[]> {
+  const pageSize = 100;
+  let page = 1;
+  let totalPages = 1;
+  const allCollections: Collection[] = [];
+
+  while (page <= totalPages) {
+    const response = await fetchCollections({
+      ...filters,
+      page,
+      pageSize,
+    });
+
+    allCollections.push(...response.data);
+    totalPages = response.pagination.totalPages;
+    page += 1;
+  }
+
+  return allCollections;
+}
+
 export async function fetchCollection(id: string): Promise<Collection> {
   const response = await fetch(`${API_BASE}/collections/${id}`);
   return handleResponse<Collection>(response);
