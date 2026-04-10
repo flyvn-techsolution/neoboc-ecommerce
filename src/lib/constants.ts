@@ -157,36 +157,6 @@ export const adminNavSections: NavSection[] = [
     ],
   },
   {
-    title: "Sản phẩm",
-    items: [
-      {
-        title: "Danh sách sản phẩm",
-        href: "/admin/products",
-        icon: Package,
-      },
-      {
-        title: "Thêm sản phẩm mới",
-        href: "/admin/products/new",
-        icon: Package,
-      },
-    ],
-  },
-  {
-    title: "Danh mục",
-    items: [
-      {
-        title: "Bộ sưu tập",
-        href: "/admin/collections",
-        icon: FolderTree,
-      },
-      {
-        title: "Phân loại",
-        href: "/admin/categories",
-        icon: Tag,
-      },
-    ],
-  },
-  {
     title: "Đơn hàng",
     items: [
       {
@@ -220,6 +190,31 @@ export const adminNavSections: NavSection[] = [
         title: "Yêu cầu thiết kế",
         href: "/admin/design-requests",
         icon: Palette,
+      },
+    ],
+  },
+  {
+    title: "Sản phẩm",
+    items: [
+      {
+        title: "Danh sách sản phẩm",
+        href: "/admin/products",
+        icon: Package,
+      },
+      {
+        title: "Thêm sản phẩm mới",
+        href: "/admin/products/new",
+        icon: Package,
+      },
+      {
+        title: "Bộ sưu tập",
+        href: "/admin/collections",
+        icon: FolderTree,
+      },
+      {
+        title: "Phân loại",
+        href: "/admin/categories",
+        icon: Tag,
       },
     ],
   },

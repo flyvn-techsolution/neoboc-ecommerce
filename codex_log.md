@@ -585,3 +585,32 @@ refactor(category-form): move SEO section to right sidebar below status
 ```
 refactor(category-form): replace status card with top action bar like collection form
 ```
+
+---
+
+## Task: Gộp menu Danh mục vào Sản phẩm và đưa Đơn hàng lên trên
+
+### Ngày: 2026-04-10 14:02:40 +0700
+
+### Mô tả công việc:
+
+Điều chỉnh menu sidebar admin theo yêu cầu:
+- Di chuyển toàn bộ menu trong section `Danh mục` vào section `Sản phẩm`.
+- Đưa section `Đơn hàng` lên trên section `Sản phẩm`.
+
+### Công việc đã làm:
+
+- Cập nhật `src/lib/constants.ts` trong `adminNavSections`:
+  - Di chuyển section `Đơn hàng` lên ngay sau `Tổng quan`.
+  - Gộp các item `Bộ sưu tập` và `Phân loại` vào section `Sản phẩm`.
+  - Xóa section `Danh mục` riêng để tránh trùng nội dung.
+
+### Kiểm tra:
+- `npm run build`: pass (27 routes, 0 error)
+
+---
+
+**Commit message:**
+```
+refactor(sidebar): merge category menu into product section and move orders above products
+```
