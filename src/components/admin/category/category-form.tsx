@@ -165,6 +165,28 @@ export function CategoryForm({
               </div>
             </CardContent>
           </Card>
+        </div>
+
+        <div className="space-y-6">
+          <Card>
+            <CardHeader>
+              <CardTitle>Trạng thái</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="flex items-center justify-between">
+                <div className="space-y-0.5">
+                  <Label>Hiển thị</Label>
+                  <p className="text-sm text-slate-500">
+                    Phân loại sẽ hiển thị trên cửa hàng
+                  </p>
+                </div>
+                <Switch
+                  checked={watchedFields.isActive}
+                  onCheckedChange={(checked) => setValue("isActive", checked)}
+                />
+              </div>
+            </CardContent>
+          </Card>
 
           <Card>
             <CardHeader>
@@ -194,28 +216,6 @@ export function CategoryForm({
                 <p className="text-xs text-slate-500">
                   Để trống để sử dụng mô tả phân loại làm mô tả SEO.
                 </p>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-
-        <div className="space-y-6">
-          <Card>
-            <CardHeader>
-              <CardTitle>Trạng thái</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="flex items-center justify-between">
-                <div className="space-y-0.5">
-                  <Label>Hiển thị</Label>
-                  <p className="text-sm text-slate-500">
-                    Phân loại sẽ hiển thị trên cửa hàng
-                  </p>
-                </div>
-                <Switch
-                  checked={watchedFields.isActive}
-                  onCheckedChange={(checked) => setValue("isActive", checked)}
-                />
               </div>
             </CardContent>
           </Card>
