@@ -668,3 +668,32 @@ refactor(sidebar): remove create-product menu item
 ```
 refactor(sidebar): rename product list menu to products
 ```
+
+---
+
+## Task: Bỏ lưu trạng thái expand menu và chỉ mở nhánh theo trang hiện tại
+
+### Ngày: 2026-04-10 14:09:49 +0700
+
+### Mô tả công việc:
+
+Xóa tính năng lưu trạng thái expand của sidebar menu. Khi mở menu, chỉ expand section/menu con tương ứng với route hiện tại.
+
+### Công việc đã làm:
+
+- Cập nhật `src/components/admin/sidebar.tsx`:
+  - Xóa toàn bộ logic persist `expandedSections` và `expandedChildren` qua `localStorage`.
+  - Xóa các state và handler toggle mở/đóng section/menu con theo kiểu lưu thủ công.
+  - Thêm logic tính `expandedSections` và `expandedChildren` bằng `useMemo` dựa trên `pathname` + query hiện tại.
+  - Chỉ mở section/menu con có chứa item active; các section/menu khác mặc định thu gọn.
+  - Chuyển nút toggle section/menu con sang hiển thị trạng thái thụ động theo nhánh active hiện tại.
+
+### Kiểm tra:
+- `npm run build`: pass (27 routes, 0 error)
+
+---
+
+**Commit message:**
+```
+refactor(sidebar): expand only active route branch and remove persisted menu state
+```

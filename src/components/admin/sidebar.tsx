@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useMemo } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import Link from "next/link";
 import { usePathname, useSearchParams } from "next/navigation";
@@ -13,123 +13,16 @@ interface AdminSidebarProps {
   onClose?: () => void;
 }
 
-const SIDEBAR_SECTIONS_STORAGE_KEY = "admin_sidebar_expanded_sections_v1";
-const SIDEBAR_CHILDREN_STORAGE_KEY = "admin_sidebar_expanded_children_v1";
-
-const ALL_SECTION_TITLES = adminNavSections.map((section) => section.title);
-
-const collectExpandableChildKeys = (
-  items: NavItem[],
-  parentKey: string
-): string[] => {
-  const keys: string[] = [];
-
-  items.forEach((item) => {
-    if (!item.children || item.children.length === 0) {
-      return;
-    }
-
-    const itemKey = `${parentKey}/${item.title}`;
-    keys.push(itemKey);
-    keys.push(...collectExpandableChildKeys(item.children, itemKey));
-  });
-
-  return keys;
-};
-
-const ALL_EXPANDABLE_CHILD_KEYS = adminNavSections.flatMap((section) =>
-  collectExpandableChildKeys(section.items, section.title)
-);
-
-const parseStoredArray = (rawValue: string | null): string[] | null => {
-  if (!rawValue) return null;
-
-  try {
-    const parsed = JSON.parse(rawValue);
-    if (!Array.isArray(parsed)) return null;
-    return parsed.filter((value): value is string => typeof value === "string");
-  } catch {
-    return null;
-  }
-};
-
 export function AdminSidebar({ isOpen = true, onClose }: AdminSidebarProps) {
   const pathname = usePathname();
   const searchParams = useSearchParams();
-  const [expandedSections, setExpandedSections] = useState<Set<string>>(
-    () => new Set(ALL_SECTION_TITLES)
+  const currentQuery = searchParams.toString();
+  const currentParams = useMemo(
+    () => new URLSearchParams(currentQuery),
+    [currentQuery]
   );
-  const [expandedChildren, setExpandedChildren] = useState<Set<string>>(
-    () => new Set(ALL_EXPANDABLE_CHILD_KEYS)
-  );
-  const [hasRestoredFromStorage, setHasRestoredFromStorage] = useState(false);
 
-  useEffect(() => {
-    const storedSections = parseStoredArray(
-      localStorage.getItem(SIDEBAR_SECTIONS_STORAGE_KEY)
-    );
-    if (storedSections) {
-      const allowedSections = new Set(ALL_SECTION_TITLES);
-      // eslint-disable-next-line react-hooks/set-state-in-effect
-      setExpandedSections(
-        new Set(storedSections.filter((title) => allowedSections.has(title)))
-      );
-    }
-
-    const storedChildren = parseStoredArray(
-      localStorage.getItem(SIDEBAR_CHILDREN_STORAGE_KEY)
-    );
-    if (storedChildren) {
-      const allowedChildren = new Set(ALL_EXPANDABLE_CHILD_KEYS);
-      setExpandedChildren(
-        new Set(storedChildren.filter((key) => allowedChildren.has(key)))
-      );
-    }
-
-    setHasRestoredFromStorage(true);
-  }, []);
-
-  useEffect(() => {
-    if (!hasRestoredFromStorage) return;
-    localStorage.setItem(
-      SIDEBAR_SECTIONS_STORAGE_KEY,
-      JSON.stringify(Array.from(expandedSections))
-    );
-  }, [expandedSections, hasRestoredFromStorage]);
-
-  useEffect(() => {
-    if (!hasRestoredFromStorage) return;
-    localStorage.setItem(
-      SIDEBAR_CHILDREN_STORAGE_KEY,
-      JSON.stringify(Array.from(expandedChildren))
-    );
-  }, [expandedChildren, hasRestoredFromStorage]);
-
-  const toggleSection = (title: string) => {
-    setExpandedSections((prev) => {
-      const next = new Set(prev);
-      if (next.has(title)) {
-        next.delete(title);
-      } else {
-        next.add(title);
-      }
-      return next;
-    });
-  };
-
-  const toggleChildren = (key: string) => {
-    setExpandedChildren((prev) => {
-      const next = new Set(prev);
-      if (next.has(key)) {
-        next.delete(key);
-      } else {
-        next.add(key);
-      }
-      return next;
-    });
-  };
-
-  const isActive = (href?: string) => {
+  const isActive = useCallback((href?: string) => {
     if (!href) return false;
 
     const [targetPath, queryString] = href.split("?");
@@ -143,11 +36,49 @@ export function AdminSidebar({ isOpen = true, onClose }: AdminSidebarProps) {
 
     const targetParams = new URLSearchParams(queryString);
     for (const [key, value] of targetParams.entries()) {
-      if (searchParams.get(key) !== value) return false;
+      if (currentParams.get(key) !== value) return false;
     }
 
     return true;
-  };
+  }, [currentParams, pathname]);
+
+  const { expandedSections, expandedChildren } = useMemo(() => {
+    const sectionSet = new Set<string>();
+    const childSet = new Set<string>();
+
+    const collectActiveBranch = (items: NavItem[], parentKey: string): boolean => {
+      let hasActiveItem = false;
+
+      items.forEach((item) => {
+        const itemKey = `${parentKey}/${item.title}`;
+        const selfActive = isActive(item.href);
+        const childActive = item.children?.length
+          ? collectActiveBranch(item.children, itemKey)
+          : false;
+
+        if (item.children?.length && childActive) {
+          childSet.add(itemKey);
+        }
+
+        if (selfActive || childActive) {
+          hasActiveItem = true;
+        }
+      });
+
+      return hasActiveItem;
+    };
+
+    adminNavSections.forEach((section) => {
+      if (collectActiveBranch(section.items, section.title)) {
+        sectionSet.add(section.title);
+      }
+    });
+
+    return {
+      expandedSections: sectionSet,
+      expandedChildren: childSet,
+    };
+  }, [isActive]);
 
   const renderNavItem = (
     item: NavItem,
@@ -187,29 +118,16 @@ export function AdminSidebar({ isOpen = true, onClose }: AdminSidebarProps) {
                   <span className="ml-auto h-1.5 w-1.5 rounded-full bg-brand-500" />
                 )}
               </Link>
-              <button
-                type="button"
-                onClick={() => toggleChildren(itemKey)}
-                aria-label={childExpanded ? "Thu gọn menu con" : "Mở rộng menu con"}
-                aria-expanded={childExpanded}
-                className="rounded-md p-1 text-slate-400 transition-colors hover:bg-slate-800 hover:text-white"
+              <motion.span
+                className="inline-flex rounded-md p-1 text-slate-400"
+                animate={{ rotate: childExpanded ? 90 : 0 }}
+                transition={{ duration: 0.2, ease: "easeOut" }}
               >
-                <motion.span
-                  className="inline-flex"
-                  animate={{ rotate: childExpanded ? 90 : 0 }}
-                  transition={{ duration: 0.2, ease: "easeOut" }}
-                >
-                  <ChevronRight className="h-4 w-4" />
-                </motion.span>
-              </button>
+                <ChevronRight className="h-4 w-4" />
+              </motion.span>
             </div>
           ) : (
-            <button
-              type="button"
-              onClick={() => toggleChildren(itemKey)}
-              className={itemRowClassName}
-              aria-expanded={childExpanded}
-            >
+            <div className={itemRowClassName}>
               <Icon className="h-4 w-4 flex-shrink-0" />
               <span className="flex-1 text-left">{item.title}</span>
               <motion.span
@@ -219,7 +137,7 @@ export function AdminSidebar({ isOpen = true, onClose }: AdminSidebarProps) {
               >
                 <ChevronRight className="h-4 w-4" />
               </motion.span>
-            </button>
+            </div>
           )}
           <AnimatePresence initial={false}>
             {childExpanded && (
@@ -301,10 +219,7 @@ export function AdminSidebar({ isOpen = true, onClose }: AdminSidebarProps) {
           <div className="space-y-6">
             {adminNavSections.map((section) => (
               <div key={section.title}>
-                <button
-                  onClick={() => toggleSection(section.title)}
-                  className="flex w-full items-center justify-between px-3 py-2 text-xs font-semibold uppercase tracking-wider text-slate-500 hover:text-slate-300"
-                >
+                <div className="flex w-full items-center justify-between px-3 py-2 text-xs font-semibold uppercase tracking-wider text-slate-500">
                   <span>{section.title}</span>
                   <motion.span
                     className="inline-flex"
@@ -313,7 +228,7 @@ export function AdminSidebar({ isOpen = true, onClose }: AdminSidebarProps) {
                   >
                     <ChevronRight className="h-3 w-3" />
                   </motion.span>
-                </button>
+                </div>
                 <AnimatePresence initial={false}>
                   {expandedSections.has(section.title) && (
                     <motion.div
