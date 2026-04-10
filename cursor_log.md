@@ -1107,3 +1107,62 @@ Refactor các icon đang dùng text glyph (`inventory_2`, `stars`, `edit_note`, 
 ### Commit message đề xuất
 
 `refactor(client-home): replace material symbol glyphs with lucide icons`
+
+---
+
+## Task: Featured Collections lấy dữ liệu ngẫu nhiên từ collection active
+
+### Ngày: 2026-04-10 22:28:00 +07:00
+
+### Mô tả công việc:
+
+Cập nhật section `Featured Collections` ở trang chủ client để lấy ngẫu nhiên 2 bộ sưu tập đang active từ database, với ảnh hiển thị là ảnh của sản phẩm đầu tiên trong từng bộ sưu tập.
+
+### Công việc đã làm:
+
+- Cập nhật `src/components/client/home/featured-collections.tsx`:
+  - Chuyển component thành async server component để query trực tiếp bằng Prisma.
+  - Thêm hàm `getFeaturedCollections()`:
+    - Lọc collection theo `isActive: true`.
+    - Chỉ lấy collection có ít nhất 1 sản phẩm (`products.some`).
+    - Lấy sản phẩm đầu tiên của mỗi collection (sắp theo `product.createdAt` tăng dần).
+  - Thêm hàm `shuffleCollections()` để random danh sách và `slice(0, 2)` lấy 2 collection.
+  - Ảnh hiển thị theo thứ tự ưu tiên:
+    - `product.featuredImage`
+    - phần tử đầu tiên hợp lệ trong `product.images`
+    - fallback ảnh mặc định nếu thiếu dữ liệu.
+  - Render key theo `collection.id` thay vì `name`.
+  - Giữ UI hiện tại, chỉ thay dữ liệu động.
+
+### Kiểm tra:
+
+- `npx eslint "src/components/client/home/featured-collections.tsx"`: pass.
+- `npx next build`: pass.
+
+### Commit message đề xuất
+
+`feat(home): show two random active collections with first product image`
+
+---
+
+## Task: Cập nhật năm hiện tại cho nút View All
+
+### Ngày: 2026-04-10 22:33:00 +07:00
+
+### Mô tả công việc:
+
+Thay text cứng `View All 2024` trong section Featured Collections bằng năm hiện tại để tự động cập nhật theo thời gian.
+
+### Công việc đã làm:
+
+- Cập nhật `src/components/client/home/featured-collections.tsx`:
+  - Thêm biến `currentYear = new Date().getFullYear()`.
+  - Đổi label nút thành `View All {currentYear}`.
+
+### Kiểm tra:
+
+- `npx eslint "src/components/client/home/featured-collections.tsx"`: pass.
+
+### Commit message đề xuất
+
+`chore(home): use current year in featured collections view-all button`
