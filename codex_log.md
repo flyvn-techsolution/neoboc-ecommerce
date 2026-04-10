@@ -830,3 +830,46 @@ Refactor dữ liệu sản phẩm theo yêu cầu mới:
 ```
 feat(product-variants): migrate to name-sku-stock-image model and derive product stock from variants
 ```
+
+---
+
+## Task: Cập nhật chọn ảnh biến thể bằng modal trong product-form
+
+### Ngày: 2026-04-10 14:31:53 +0700
+
+### Mô tả công việc:
+
+Điều chỉnh UX chọn ảnh biến thể:
+- Nếu biến thể chưa có ảnh: hiển thị nút `Chọn ảnh`.
+- Khi nhấn nút: mở modal danh sách ảnh sản phẩm để chọn ảnh hoặc xóa ảnh.
+- Nếu biến thể đã có ảnh: nhấn trực tiếp vào ảnh để mở modal và đổi/xóa ảnh.
+
+### Công việc đã làm:
+
+- Cập nhật `src/components/admin/product/product-form.tsx`:
+  - Thay dropdown chọn ảnh biến thể bằng flow modal.
+  - Thêm state `variantImagePickerIndex` để biết biến thể đang mở trình chọn ảnh.
+  - Với biến thể chưa có ảnh:
+    - Hiển thị nút `Chọn ảnh`.
+    - Disable nút khi chưa có ảnh sản phẩm.
+  - Với biến thể đã có ảnh:
+    - Hiển thị thumbnail ảnh.
+    - Nhấn vào thumbnail để mở modal chọn ảnh.
+  - Thêm `Dialog` modal:
+    - Hiển thị lưới ảnh sản phẩm.
+    - Click ảnh để gán ảnh cho biến thể.
+    - Có nút `Xóa ảnh` để bỏ ảnh khỏi biến thể hiện tại.
+    - Có nút `Đóng`.
+  - Bổ sung xử lý khi xóa biến thể:
+    - Nếu modal đang mở ở biến thể bị xóa thì đóng modal.
+    - Nếu index modal nằm sau biến thể bị xóa thì tự điều chỉnh index.
+
+### Kiểm tra:
+- `npm run build`: pass (27 routes, 0 error)
+
+---
+
+**Commit message:**
+```
+feat(product-form): add variant image picker modal with choose/replace/remove flow
+```
