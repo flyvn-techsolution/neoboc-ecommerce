@@ -1016,3 +1016,94 @@ feat(category): add complete CRUD functionality for categories
 ### Commit message đề xuất
 
 `chore(migration): add featured_image column to products table`
+
+---
+
+## Task: Dựng layout client và tách component trang chủ từ HTML mẫu
+
+### Ngày: 2026-04-10 22:03:00 +07:00
+
+### Mô tả công việc:
+
+Chuyển giao diện mẫu trong `client_layout.html` thành trang client thật trong Next.js, tạo layout riêng cho client và tách homepage thành các component độc lập để dễ bảo trì.
+
+### Công việc đã làm:
+
+- Cập nhật route client:
+  - Sửa `app/shop/page.tsx` để render homepage client mới thay vì redirect admin.
+  - Thêm `app/page.tsx` redirect về `/shop` để dùng trang client làm trang chủ.
+- Tạo layout riêng cho client tại `app/shop/layout.tsx`:
+  - Dùng font `Manrope` bằng `next/font/google`.
+  - Áp màu nền/chữ theo thiết kế.
+  - Import stylesheet riêng của route `shop`.
+- Tạo stylesheet `app/shop/shop.css`:
+  - Thêm `@import` cho Material Symbols.
+  - Định nghĩa class `.grainy-overlay` và `.material-symbols-outlined`.
+- Tách homepage thành các component trong `src/components/client/home`:
+  - `client-home-page.tsx` (compose toàn trang)
+  - `client-navbar.tsx`
+  - `hero-section.tsx`
+  - `services-section.tsx`
+  - `featured-collections.tsx`
+  - `bestsellers-section.tsx`
+  - `faq-section.tsx`
+  - `client-footer.tsx`
+
+### Kiểm tra:
+- `npx next build`: pass.
+- `ReadLints` cho các file đã chỉnh sửa: không có lỗi lint mới.
+
+---
+
+**Commit message:**
+```
+feat(client-home): add shop layout and split homepage into reusable components
+```
+
+---
+
+## Task: Chuyển icon homepage sang lucide-react
+
+### Ngày: 2026-04-10 22:18:00 +07:00
+
+### Mô tả công việc:
+
+Refactor các icon đang dùng text glyph (`inventory_2`, `stars`, `edit_note`, ...) ở trang client homepage sang icon component từ `lucide-react`.
+
+### Công việc đã làm:
+
+- Đọc lại rule tại `.cursor/rules/strict-rules.mdc` trước khi thực hiện.
+- Refactor icon tại các component homepage:
+  - `src/components/client/home/client-navbar.tsx`
+    - `search` -> `Search`
+    - `shopping_bag` -> `ShoppingBag`
+  - `src/components/client/home/services-section.tsx`
+    - `inventory_2` -> `Package`
+    - `stars` -> `Sparkles`
+    - `edit_note` -> `PenTool`
+    - `arrow_forward` -> `ArrowRight`
+  - `src/components/client/home/bestsellers-section.tsx`
+    - `add_shopping_cart` -> `ShoppingCart`
+  - `src/components/client/home/faq-section.tsx`
+    - `add` -> `Plus`
+  - `src/components/client/home/client-footer.tsx`
+    - `send` -> `Send`
+- Dọn style không còn cần thiết trong `app/shop/shop.css`:
+  - Xóa import Material Symbols.
+  - Xóa class `.material-symbols-outlined`.
+- Tối ưu ảnh homepage để tránh warning:
+  - Chuyển `<img>` sang `next/image` tại:
+    - `hero-section.tsx`
+    - `featured-collections.tsx`
+    - `bestsellers-section.tsx`
+  - Thêm `images.remotePatterns` cho `lh3.googleusercontent.com` trong `next.config.ts`.
+
+### Kiểm tra:
+- `npm run lint`: fail do lỗi tồn đọng ở module admin/ui/types (không thuộc phạm vi task này).
+- `npx eslint "src/components/client/home/**/*.tsx" "app/shop/layout.tsx" "app/shop/page.tsx" "app/shop/shop.css"`:
+  - Không có error trong phạm vi file task (1 warning do `shop.css` bị eslint bỏ qua vì không có config).
+- `npx next build`: pass.
+
+### Commit message đề xuất
+
+`refactor(client-home): replace material symbol glyphs with lucide icons`

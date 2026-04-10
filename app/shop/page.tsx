@@ -1,5 +1,5 @@
-import { redirect } from "next/navigation";
+import { ClientHomePage } from "@/components/client/home/client-home-page";
 
 export default function HomePage() {
-  redirect("/admin");
+  return <ClientHomePage />;
 }
