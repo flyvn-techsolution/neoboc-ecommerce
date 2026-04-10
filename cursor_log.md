@@ -995,3 +995,24 @@ Xây dựng complete CRUD cho Phân loại sản phẩm (Categories) bao gồm A
 ```
 feat(category): add complete CRUD functionality for categories
 ```
+# Cursor Task Log
+
+## Task: Thêm migration cột featured_image cho bảng products
+
+### Ngày: 2026-04-10 20:48:30 +07:00
+
+### Công việc đã làm
+
+- Tạo migration mới tại `prisma/migrations/20260410154500_add_featured_image_to_products/migration.sql`.
+- Thêm câu lệnh SQL:
+  - `ALTER TABLE "products" ADD COLUMN "featured_image" TEXT;`
+- Giữ nguyên `prisma/schema.prisma` vì field `featuredImage` đã tồn tại và map đúng sang `featured_image`.
+
+### Verify
+
+- `npx next build`: pass.
+- `npm run lint`: fail do lỗi/warning tồn đọng không liên quan trực tiếp đến migration vừa thêm.
+
+### Commit message đề xuất
+
+`chore(migration): add featured_image column to products table`

@@ -873,3 +873,32 @@ feat(product-variants): migrate to name-sku-stock-image model and derive product
 ```
 feat(product-form): add variant image picker modal with choose/replace/remove flow
 ```
+
+---
+
+## Task: Thêm migration cột featured_image cho bảng products
+
+### Ngày: 2026-04-10 20:48:30 +07:00
+
+### Mô tả công việc:
+
+Tạo migration mới để bổ sung cột ảnh chính cho bảng `products`, đồng bộ với field `featuredImage` đã có trong Prisma schema.
+
+### Công việc đã làm:
+
+- Tạo file migration mới: `prisma/migrations/20260410154500_add_featured_image_to_products/migration.sql`.
+- Nội dung migration:
+  - `ALTER TABLE "products" ADD COLUMN "featured_image" TEXT;`
+- Không chỉnh sửa thêm schema vì model `Product` đã có sẵn field:
+  - `featuredImage String? @map("featured_image")`
+
+### Kiểm tra:
+- `npx next build`: pass.
+- `npm run lint`: fail do lỗi/warning có sẵn ở nhiều file không thuộc phạm vi migration (ví dụ `sidebar.tsx`, `input.tsx`, `textarea.tsx`, các file table/form admin).
+
+---
+
+**Commit message:**
+```
+chore(migration): add featured_image column to products table
+```
