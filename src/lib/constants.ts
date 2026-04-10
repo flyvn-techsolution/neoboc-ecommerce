@@ -197,7 +197,7 @@ export const adminNavSections: NavSection[] = [
     title: "Sản phẩm",
     items: [
       {
-        title: "Danh sách sản phẩm",
+        title: "Sản phẩm",
         href: "/admin/products",
         icon: Package,
       },

@@ -643,3 +643,28 @@ Xóa item menu `Thêm sản phẩm mới` khỏi section `Sản phẩm` trong si
 ```
 refactor(sidebar): remove create-product menu item
 ```
+
+---
+
+## Task: Đổi tên menu "Danh sách sản phẩm" thành "Sản phẩm"
+
+### Ngày: 2026-04-10 14:06:25 +0700
+
+### Mô tả công việc:
+
+Đổi tên item menu trong section `Sản phẩm` từ `Danh sách sản phẩm` thành `Sản phẩm`.
+
+### Công việc đã làm:
+
+- Cập nhật `src/lib/constants.ts`:
+  - Đổi `title` của item có `href: "/admin/products"` từ `Danh sách sản phẩm` -> `Sản phẩm`.
+
+### Kiểm tra:
+- `npm run build`: pass (27 routes, 0 error)
+
+---
+
+**Commit message:**
+```
+refactor(sidebar): rename product list menu to products
+```
