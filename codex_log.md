@@ -182,3 +182,31 @@ Thay đổi vị trí hiển thị toast từ `bottom-right` sang `top-right`.
 ```
 style(toast): move toast viewport to top-right position
 ```
+
+---
+
+## Task: Xóa "Thêm bộ sưu tập" khỏi sidebar
+
+### Ngày: 2026-04-10 12:20:09 +0700
+
+### Mô tả công việc:
+
+Xóa mục điều hướng thêm bộ sưu tập khỏi sidebar trang quản trị.
+
+### Công việc đã làm:
+
+- Cập nhật `src/lib/constants.ts`:
+  - Trong `adminNavSections` > section `Danh mục`, xóa item menu:
+    - `title: "Thêm bộ sưu tập mới"`
+    - `href: "/admin/collections/new"`
+  - Giữ nguyên các mục còn lại trong sidebar và giữ nguyên route `/admin/collections/new`.
+
+### Kiểm tra:
+- `npm run build`: pass (25 routes, 0 error)
+
+---
+
+**Commit message:**
+```
+chore(admin-sidebar): remove add-collection navigation item
+```

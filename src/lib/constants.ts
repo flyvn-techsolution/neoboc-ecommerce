@@ -180,11 +180,6 @@ export const adminNavSections: NavSection[] = [
         icon: FolderTree,
       },
       {
-        title: "Thêm bộ sưu tập mới",
-        href: "/admin/collections/new",
-        icon: FolderTree,
-      },
-      {
         title: "Phân loại",
         href: "/admin/categories",
         icon: Tag,
