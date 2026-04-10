@@ -493,3 +493,34 @@ fix(product-table): prioritize featuredImage for thumbnail preview
 ```
 style(toast): apply success variant for success notifications in admin pages
 ```
+
+---
+
+## Task: Bổ sung tự động tạo slug cho category-form và collection-form
+
+### Ngày: 2026-04-10 13:53:29 +0700
+
+### Mô tả công việc:
+
+Thêm tính năng tự động tạo `slug` từ `name` cho form phân loại và bộ sưu tập để đồng bộ hành vi nhập liệu với product form.
+
+### Công việc đã làm:
+
+- Cập nhật `src/components/admin/category/category-form.tsx`:
+  - Dùng helper `generateSlug` từ `@/lib/utils/format` thay vì khai báo hàm local trong component.
+  - Khi thay đổi trường `name`, tự động cập nhật trường `slug` theo giá trị đã chuẩn hóa.
+  - Loại bỏ điều kiện chỉ tự tạo slug ở chế độ tạo mới, đảm bảo đổi tên là cập nhật slug ngay.
+- Cập nhật `src/components/admin/collection/collection-form.tsx`:
+  - Dùng helper `generateSlug` từ `@/lib/utils/format` thay vì khai báo hàm local trong component.
+  - Khi thay đổi trường `name`, tự động cập nhật trường `slug` theo giá trị đã chuẩn hóa.
+  - Loại bỏ điều kiện chỉ tự tạo slug ở chế độ tạo mới, đảm bảo đổi tên là cập nhật slug ngay.
+
+### Kiểm tra:
+- `npm run build`: pass (27 routes, 0 error)
+
+---
+
+**Commit message:**
+```
+feat(forms): auto-generate category and collection slug from name
+```

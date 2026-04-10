@@ -13,7 +13,7 @@ import {
   ArrowLeft,
   Loader2,
 } from "lucide-react";
-import { cn } from "@/lib/utils/format";
+import { cn, generateSlug } from "@/lib/utils/format";
 import type { Collection, CreateCollectionInput } from "@/types/collection";
 
 interface CollectionFormData {
@@ -58,19 +58,7 @@ export function CollectionForm({
 
   const handleNameChange = (value: string) => {
     setValue("name", value);
-    if (!collection) {
-      setValue("slug", generateSlug(value));
-    }
-  };
-
-  const generateSlug = (text: string): string => {
-    return text
-      .toLowerCase()
-      .normalize("NFD")
-      .replace(/[\u0300-\u036f]/g, "")
-      .replace(/[đĐ]/g, "d")
-      .replace(/[^a-z0-9]+/g, "-")
-      .replace(/^-+|-+$/g, "");
+    setValue("slug", generateSlug(value));
   };
 
   const validateForm = (data: CollectionFormData): FieldErrors<CollectionFormData> => {
