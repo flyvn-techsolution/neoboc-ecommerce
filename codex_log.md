@@ -461,3 +461,35 @@ feat(product-images): add featured image selection with radio button in dropzone
 ```
 fix(product-table): prioritize featuredImage for thumbnail preview
 ```
+
+---
+
+## Task: Toast thành công có nền xanh nhẹ
+
+### Ngày: 2026-04-10 13:14:58 +0700
+
+### Mô tả công việc:
+
+Đảm bảo tất cả toast thành công trong trang admin hiển thị nền xanh nhẹ bằng cách dùng variant `success`.
+
+### Công việc đã làm:
+
+- Cập nhật các trang dùng `useToast` để bổ sung `variant: "success"` cho toast có `title: "Thành công"`:
+  - `app/admin/(dashboard)/products/new/page.tsx`
+  - `app/admin/(dashboard)/products/[id]/page.tsx`
+  - `app/admin/(dashboard)/products/page.tsx`
+  - `app/admin/(dashboard)/collections/new/page.tsx`
+  - `app/admin/(dashboard)/collections/[id]/page.tsx`
+  - `app/admin/(dashboard)/collections/page.tsx`
+- Giữ nguyên toast lỗi với `variant: "destructive"`.
+- Lưu ý: style `success` đã có sẵn trong `src/hooks/use-toast.tsx` (`bg-green-50 border-green-200 text-green-900`), nên chỉ cần gán đúng variant ở nơi gọi.
+
+### Kiểm tra:
+- `npm run build`: pass (26 routes, 0 error)
+
+---
+
+**Commit message:**
+```
+style(toast): apply success variant for success notifications in admin pages
+```

@@ -17,6 +17,7 @@ export default function NewCollectionPage() {
       toast({
         title: "Thành công",
         description: "Đã tạo bộ sưu tập mới",
+        variant: "success",
       });
       router.push("/admin/collections");
     } catch (error) {

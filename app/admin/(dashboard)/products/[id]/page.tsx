@@ -53,6 +53,7 @@ export default function EditProductPage() {
       toast({
         title: "Thành công",
         description: "Đã cập nhật sản phẩm",
+        variant: "success",
       });
       router.push("/admin/products");
     } catch (error) {

@@ -53,6 +53,7 @@ function CollectionsPageContent() {
       toast({
         title: "Thành công",
         description: "Đã xóa bộ sưu tập",
+        variant: "success",
       });
     } catch (err) {
       toast({

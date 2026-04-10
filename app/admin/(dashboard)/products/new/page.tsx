@@ -55,6 +55,7 @@ export default function NewProductPage() {
       toast({
         title: "Thành công",
         description: "Đã tạo sản phẩm mới",
+        variant: "success",
       });
       router.push("/admin/products");
     } catch (error) {

@@ -24,6 +24,7 @@ export default function EditCollectionPage() {
       toast({
         title: "Thành công",
         description: "Đã cập nhật bộ sưu tập",
+        variant: "success",
       });
       router.push("/admin/collections");
     } catch (error) {

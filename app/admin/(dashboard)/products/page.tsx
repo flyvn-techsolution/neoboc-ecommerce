@@ -59,6 +59,7 @@ function ProductsPageContent() {
       toast({
         title: "Thành công",
         description: "Đã xóa sản phẩm",
+        variant: "success",
       });
     } catch (err) {
       toast({
