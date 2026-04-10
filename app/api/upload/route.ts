@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { writeFile, mkdir } from "fs/promises";
 import path from "path";
-import { randomUUID } from "crypto";
 
 const UPLOAD_DIR = path.join(process.cwd(), "public", "uploads", "products");
 
@@ -40,7 +39,7 @@ export async function POST(request: NextRequest) {
       }
 
       const ext = file.name.split(".").pop() || "jpg";
-      const fileName = `${randomUUID()}.${ext}`;
+      const fileName = `${crypto.randomUUID()}.${ext}`;
       const filePath = path.join(UPLOAD_DIR, fileName);
 
       const bytes = await file.arrayBuffer();

@@ -1,6 +1,9 @@
 import { auth } from "@/lib/auth"
 import { NextResponse } from "next/server"
 
+// Chỉ định rõ dùng Node.js runtime vì auth() sử dụng crypto cho JWT
+export const runtime = 'nodejs'
+
 export default auth((req) => {
   const { pathname } = req.nextUrl
   const isLoginPage = pathname.startsWith("/admin/login")
