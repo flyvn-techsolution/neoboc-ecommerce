@@ -348,3 +348,88 @@ Khắc phục lỗi runtime tại `/admin/products/new` (và phòng ngừa tươ
 ```
 fix(product-form): normalize collections response shape on new/edit product pages
 ```
+
+---
+
+## Task: Thêm Dropzone upload ảnh cho product-form
+
+### Ngày: 2026-04-10
+
+### Mô tả công việc:
+
+Thay thế input paste URL ảnh trong product-form bằng Dropzone cho phép kéo thả và upload trực tiếp, ảnh lưu vào thư mục `public/uploads/products/`.
+
+### Công việc đã làm:
+
+- Tạo API endpoint `app/api/upload/route.ts`:
+  - Hỗ trợ POST multipart/form-data, nhận nhiều file cùng lúc.
+  - Validate: chỉ chấp nhận JPEG, PNG, GIF, WebP; giới hạn 5MB/file.
+  - Lưu file vào `public/uploads/products/` với tên ngẫu nhiên UUID để tránh trùng lặp.
+  - Trả về mảng URL `/uploads/products/<filename>` sau khi upload thành công.
+- Tạo component `src/components/ui/dropzone.tsx`:
+  - Dùng HTML5 Drag & Drop API, không cần package bổ sung.
+  - Hỗ trợ kéo thả, click để chọn file, chọn nhiều file.
+  - Preview ảnh đã upload với thumbnail.
+  - Thanh progress khi upload, trạng thái loading/error.
+  - Xóa ảnh đã upload bằng nút X trên thumbnail.
+  - Hiển thị "Ảnh chính" cho ảnh đầu tiên.
+  - Auto-cleanup ObjectURL khi component unmount hoặc upload xong.
+- Cập nhật `src/components/admin/product/product-form.tsx`:
+  - Thay phần Images Card từ input URL + button "Thêm" sang dùng component `Dropzone`.
+  - Xóa state `newImageUrl`, hàm `handleAddImage`, `handleRemoveImage` không còn cần thiết.
+  - Xóa import `Image` từ next/image, `ImageIcon`, `X`, `normalizeImageSrc` không còn dùng.
+  - Thêm handler `handleImagesChange` để sync state images lên form.
+
+### Kiểm tra:
+- `npm run build`: pass (26 routes, 0 error)
+
+---
+
+**Commit message:**
+```
+feat(product-images): add dropzone upload with /api/upload endpoint for product images
+```
+
+---
+
+## Task: Thêm radio button chọn featured image trong Dropzone
+
+### Ngày: 2026-04-10
+
+### Mô tả công việc:
+
+Mỗi sản phẩm có nhiều ảnh, cần cho phép chọn 1 ảnh làm featured image (ảnh chính). Dropzone hiển thị toàn bộ ảnh đã upload với radio button (icon Star) trên mỗi ảnh để chọn featured.
+
+### Công việc đã làm:
+
+- Cập nhật `prisma/schema.prisma`:
+  - Thêm field `featuredImage String?` vào model `Product`.
+  - Chạy `prisma generate` để cập nhật Prisma client.
+- Cập nhật `src/types/product.ts`:
+  - Thêm `featuredImage: string | null` vào interface `Product`.
+  - Thêm `featuredImage?: string` vào interface `CreateProductInput`.
+- Cập nhật `src/components/ui/dropzone.tsx`:
+  - Thêm props `featuredImage?: string | null` và `onFeaturedChange?: (url: string | null) => void`.
+  - Mỗi thumbnail ảnh có nút Star ở góc trái trên - click để chọn featured.
+  - Ảnh featured có border brand + ring, nhãn "Ảnh chính" ở góc trái dưới.
+  - Khi upload xong ảnh đầu tiên và chưa có featured thì auto chọn featured.
+  - Khi xóa ảnh featured thì tự động chọn ảnh đầu tiên còn lại.
+- Cập nhật `src/components/admin/product/product-form.tsx`:
+  - Thêm state `featuredImage` với logic khởi tạo: ưu tiên `product.featuredImage`, fallback ảnh đầu tiên trong mảng `images`.
+  - Thêm handler `handleFeaturedChange` để sync featured state.
+  - Truyền `featuredImage` và `onFeaturedChange` vào Dropzone.
+  - Thêm `featuredImage: featuredImage || undefined` vào submit data.
+- Cập nhật API routes:
+  - `app/api/products/route.ts`: GET list và POST create xử lý `featuredImage`.
+  - `app/api/products/[id]/route.ts`: GET by id và PUT update xử lý `featuredImage`.
+
+### Kiểm tra:
+- `npm run build`: pass (26 routes, 0 error)
+- `npx prisma generate`: thành công
+
+---
+
+**Commit message:**
+```
+feat(product-images): add featured image selection with radio button in dropzone
+```

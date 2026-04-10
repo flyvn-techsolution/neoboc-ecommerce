@@ -47,6 +47,7 @@ export async function GET(
         : null,
       salePrice: product.salePrice ? Number(product.salePrice) : null,
       images: toImageArray(product.images),
+      featuredImage: product.featuredImage,
       categories: product.categories.map((cp) => cp.category),
       collections: product.collections.map((cp) => cp.collection),
     };
@@ -84,6 +85,7 @@ export async function PUT(
       categoryIds,
       collectionIds,
       variants,
+      featuredImage,
     } = body;
     const normalizedImages = images !== undefined ? toImageArray(images) : undefined;
 
@@ -133,6 +135,7 @@ export async function PUT(
               : undefined,
           stock: stock !== undefined ? stock : undefined,
           images: normalizedImages,
+          featuredImage: featuredImage !== undefined ? (featuredImage || null) : undefined,
           seoTitle: seoTitle !== undefined ? seoTitle || null : undefined,
           seoDescription:
             seoDescription !== undefined ? seoDescription || null : undefined,
@@ -222,6 +225,7 @@ export async function PUT(
         ? Number(updatedProduct!.salePrice)
         : null,
       images: toImageArray(updatedProduct!.images),
+      featuredImage: updatedProduct!.featuredImage,
       categories: updatedProduct!.categories.map((cp) => cp.category),
       collections: updatedProduct!.collections.map((cp) => cp.collection),
     };

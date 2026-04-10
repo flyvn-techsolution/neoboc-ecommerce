@@ -92,6 +92,7 @@ export async function GET(request: NextRequest) {
       originalPrice: product.originalPrice ? Number(product.originalPrice) : null,
       salePrice: product.salePrice ? Number(product.salePrice) : null,
       images: toImageArray(product.images),
+      featuredImage: product.featuredImage || null,
       categories: product.categories.map((cp) => cp.category),
       collections: product.collections.map((cp) => cp.collection),
     }));
@@ -133,6 +134,7 @@ export async function POST(request: NextRequest) {
       categoryIds,
       collectionIds,
       variants,
+      featuredImage,
     } = body;
     const normalizedImages = toImageArray(images);
 
@@ -164,6 +166,7 @@ export async function POST(request: NextRequest) {
         salePrice: salePrice ? new Prisma.Decimal(salePrice) : null,
         stock: stock || 0,
         images: normalizedImages,
+        featuredImage: featuredImage || null,
         seoTitle: seoTitle || null,
         seoDescription: seoDescription || null,
         isActive: isActive !== undefined ? isActive : true,
@@ -224,6 +227,7 @@ export async function POST(request: NextRequest) {
         : null,
       salePrice: product.salePrice ? Number(product.salePrice) : null,
       images: toImageArray(product.images),
+      featuredImage: product.featuredImage,
       categories: product.categories.map((cp) => cp.category),
       collections: product.collections.map((cp) => cp.collection),
     };

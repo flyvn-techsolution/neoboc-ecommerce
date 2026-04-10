@@ -75,6 +75,7 @@ model Product {
   salePrice      Decimal?  @db.Decimal(12, 2)
   stock          Int       @default(0)
   images         Json      @default("[]") // Mảng URL ảnh
+  featuredImage  String?   @map("featured_image") // URL ảnh chính (featured)
   seoTitle       String?   @map("seo_title")
   seoDescription String?   @map("seo_description") @db.Text
   isActive       Boolean   @default(true)

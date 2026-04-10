@@ -33,6 +33,7 @@ export interface Product {
   salePrice: number | null;
   stock: number;
   images: string[];
+  featuredImage: string | null;
   seoTitle: string | null;
   seoDescription: string | null;
   isActive: boolean;
@@ -76,6 +77,7 @@ export interface CreateProductInput {
   salePrice?: number;
   stock?: number;
   images?: string[];
+  featuredImage?: string;
   seoTitle?: string;
   seoDescription?: string;
   isActive?: boolean;

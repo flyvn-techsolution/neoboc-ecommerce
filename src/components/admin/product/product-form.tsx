@@ -2,30 +2,26 @@
 
 import { useState } from "react";
 import { useForm, type FieldErrors } from "react-hook-form";
-import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Select } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
-  Plus,
   Trash2,
-  ImageIcon,
-  X,
   Save,
   ArrowLeft,
   Loader2,
+  Plus,
 } from "lucide-react";
 import {
   cn,
   generateSlug,
-  normalizeImageSrc,
   toImageArray,
 } from "@/lib/utils/format";
+import { Dropzone } from "@/components/ui/dropzone";
 import type { Product, ProductCategory, ProductCollection, CreateProductInput } from "@/types/product";
 
 interface ProductFormData {
@@ -61,7 +57,9 @@ export function ProductForm({
 }: ProductFormProps) {
   const router = useRouter();
   const [images, setImages] = useState<string[]>(toImageArray(product?.images));
-  const [newImageUrl, setNewImageUrl] = useState("");
+  const [featuredImage, setFeaturedImage] = useState<string | null>(
+    product?.featuredImage || (product?.images?.length ? toImageArray(product.images)[0] : null)
+  );
   const [variants, setVariants] = useState<
     Array<{
       id?: string;
@@ -103,30 +101,30 @@ export function ProductForm({
   };
 
   const validateForm = (data: ProductFormData): FieldErrors<ProductFormData> => {
-    const errors: FieldErrors<ProductFormData> = {};
+    const errs: FieldErrors<ProductFormData> = {};
 
     if (!data.name || data.name.trim() === "") {
-      errors.name = { type: "required", message: "Tên sản phẩm là bắt buộc" };
+      errs.name = { type: "required", message: "Tên sản phẩm là bắt buộc" };
     }
 
     if (!data.slug || data.slug.trim() === "") {
-      errors.slug = { type: "required", message: "Slug là bắt buộc" };
+      errs.slug = { type: "required", message: "Slug là bắt buộc" };
     } else if (!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(data.slug)) {
-      errors.slug = { type: "pattern", message: "Slug không hợp lệ" };
+      errs.slug = { type: "pattern", message: "Slug không hợp lệ" };
     }
 
     if (data.price === undefined || data.price < 0) {
-      errors.price = { type: "min", message: "Giá phải lớn hơn hoặc bằng 0" };
+      errs.price = { type: "min", message: "Giá phải lớn hơn hoặc bằng 0" };
     }
 
     if (data.stock !== undefined && data.stock < 0) {
-      errors.stock = { type: "min", message: "Tồn kho phải là số nguyên dương" };
+      errs.stock = { type: "min", message: "Tồn kho phải là số nguyên dương" };
     }
 
-    return errors;
+    return errs;
   };
 
-  const handleFormSubmit = handleSubmit(
+  const onFormSubmit = handleSubmit(
     (data) => {
       clearErrors();
 
@@ -148,29 +146,23 @@ export function ProductForm({
       const submitData: CreateProductInput = {
         ...data,
         images,
+        featuredImage: featuredImage || undefined,
         variants: variants.filter((v) => v.variantName && v.optionValue),
       };
       onSubmit(submitData);
     },
-    (errors) => {
-      console.log("Form validation errors:", errors);
+    (formErrors) => {
+      console.log("Form validation errors:", formErrors);
     }
   );
 
-  const handleAddImage = () => {
-    const normalizedImageUrl = normalizeImageSrc(newImageUrl);
-
-    if (normalizedImageUrl) {
-      setImages((prev) => [...prev, normalizedImageUrl]);
-      setValue("images", [...images, normalizedImageUrl]);
-      setNewImageUrl("");
-    }
+  const handleImagesChange = (newUrls: string[]) => {
+    setImages(newUrls);
+    setValue("images", newUrls);
   };
 
-  const handleRemoveImage = (index: number) => {
-    const newImages = images.filter((_, i) => i !== index);
-    setImages(newImages);
-    setValue("images", newImages);
+  const handleFeaturedChange = (url: string | null) => {
+    setFeaturedImage(url);
   };
 
   const handleAddVariant = () => {
@@ -213,7 +205,7 @@ export function ProductForm({
   };
 
   return (
-    <form onSubmit={handleFormSubmit} className="space-y-6">
+    <form onSubmit={onFormSubmit} className="space-y-6">
       <div className="flex items-center justify-between">
         <Button
           type="button"
@@ -388,69 +380,15 @@ export function ProductForm({
             <CardHeader>
               <CardTitle>Hình ảnh sản phẩm</CardTitle>
             </CardHeader>
-            <CardContent className="space-y-4">
-              {images.length > 0 && (
-                <div className="grid grid-cols-4 gap-4">
-                  {images.map((url, index) => {
-                    const normalizedUrl = normalizeImageSrc(url);
-
-                    return (
-                      <div
-                        key={index}
-                        className="relative aspect-square rounded-lg border border-slate-200 overflow-hidden bg-slate-100 group"
-                      >
-                        {normalizedUrl ? (
-                          <Image
-                            src={normalizedUrl}
-                            alt={`Image ${index + 1}`}
-                            fill
-                            className="object-cover"
-                          />
-                        ) : (
-                          <div className="flex h-full w-full items-center justify-center">
-                            <ImageIcon className="h-5 w-5 text-slate-400" />
-                          </div>
-                        )}
-                        <button
-                          type="button"
-                          onClick={() => handleRemoveImage(index)}
-                          className="absolute top-1 right-1 h-6 w-6 rounded-full bg-red-500 text-white opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center"
-                        >
-                          <X className="h-3 w-3" />
-                        </button>
-                        {index === 0 && (
-                          <span className="absolute bottom-1 left-1 bg-brand-500 text-white text-xs px-1.5 py-0.5 rounded">
-                            Ảnh chính
-                          </span>
-                        )}
-                      </div>
-                    );
-                  })}
-                </div>
-              )}
-
-              <div className="flex gap-2">
-                <Input
-                  placeholder="Nhập URL hình ảnh..."
-                  value={newImageUrl}
-                  onChange={(e) => setNewImageUrl(e.target.value)}
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter") {
-                      e.preventDefault();
-                      handleAddImage();
-                    }
-                  }}
-                />
-                <Button
-                  type="button"
-                  variant="outline"
-                  onClick={handleAddImage}
-                  disabled={!newImageUrl}
-                >
-                  <Plus className="h-4 w-4" />
-                  Thêm
-                </Button>
-              </div>
+            <CardContent>
+              <Dropzone
+                value={images}
+                onChange={handleImagesChange}
+                featuredImage={featuredImage}
+                onFeaturedChange={handleFeaturedChange}
+                maxFiles={10}
+                maxSizeMB={5}
+              />
             </CardContent>
           </Card>
 
