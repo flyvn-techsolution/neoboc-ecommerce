@@ -1,9 +1,14 @@
 "use client"
 
 import { useState } from "react"
-import { AdminSidebar } from "./sidebar"
+import dynamic from "next/dynamic"
 import { AdminHeaderClient } from "./header-client"
 import { cn } from "@/lib/utils/format"
+
+const AdminSidebar = dynamic(
+  () => import("./sidebar").then((mod) => mod.AdminSidebar),
+  { ssr: false }
+)
 
 interface DashboardShellProps {
   user: { name?: string | null; email?: string | null } | null

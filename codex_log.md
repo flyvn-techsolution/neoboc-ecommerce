@@ -210,3 +210,31 @@ Xóa mục điều hướng thêm bộ sưu tập khỏi sidebar trang quản tr
 ```
 chore(admin-sidebar): remove add-collection navigation item
 ```
+
+---
+
+## Task: Fix hydration mismatch ở AdminSidebar sau khi xóa menu bộ sưu tập
+
+### Ngày: 2026-04-10 12:25:22 +0700
+
+### Mô tả công việc:
+
+Khắc phục lỗi hydration mismatch (server/client render khác nhau ở item sidebar thuộc section `Danh mục`) phát sinh sau khi thay đổi menu admin.
+
+### Công việc đã làm:
+
+- Đọc docs Next.js 16 trong `node_modules/next/dist/docs/01-app/02-guides/lazy-loading.md` để xác nhận cách dùng `next/dynamic` với `ssr: false` cho Client Component.
+- Cập nhật `src/components/admin/dashboard-shell.tsx`:
+  - Thay import trực tiếp `AdminSidebar` bằng dynamic import:
+    - `dynamic(() => import("./sidebar").then((mod) => mod.AdminSidebar), { ssr: false })`
+  - Mục tiêu: không prerender HTML của sidebar trên server, tránh lệch markup giữa server và client khi menu thay đổi.
+
+### Kiểm tra:
+- `npm run build`: pass (25 routes, 0 error)
+
+---
+
+**Commit message:**
+```
+fix(admin-sidebar): load sidebar client-only to prevent hydration mismatch
+```
