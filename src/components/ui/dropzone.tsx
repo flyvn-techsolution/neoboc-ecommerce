@@ -94,12 +94,26 @@ export function Dropzone({
     setUploadingFiles((prev) => [...prev, ...newUploads]);
     setError(null);
 
+    let nextUrls = [...value];
+    let hasFeaturedImage = Boolean(featuredImage);
+
     for (const upload of newUploads) {
-      await uploadFile(upload);
+      const newUrl = await uploadFile(upload);
+      if (!newUrl) {
+        continue;
+      }
+
+      nextUrls = [...nextUrls, newUrl];
+      onChange?.(nextUrls);
+
+      if (!hasFeaturedImage) {
+        onFeaturedChange?.(newUrl);
+        hasFeaturedImage = true;
+      }
     }
   };
 
-  const uploadFile = async (upload: UploadingFile) => {
+  const uploadFile = async (upload: UploadingFile): Promise<string | null> => {
     const formData = new FormData();
     formData.append("files", upload.file);
 
@@ -124,25 +138,21 @@ export function Dropzone({
             f.id === upload.id ? { ...f, progress: 100, error: data.error } : f
           )
         );
-        return;
+        return null;
       }
 
       const newUrl = data.urls[0];
       URL.revokeObjectURL(upload.preview);
 
-      const updated = [...value, newUrl];
       setUploadingFiles((prev) => prev.filter((f) => f.id !== upload.id));
-      onChange?.(updated);
-
-      if (!featuredImage) {
-        onFeaturedChange?.(newUrl);
-      }
+      return newUrl;
     } catch {
       setUploadingFiles((prev) =>
         prev.map((f) =>
           f.id === upload.id ? { ...f, progress: 100, error: "Lỗi upload" } : f
         )
       );
+      return null;
     }
   };
 

@@ -1166,3 +1166,134 @@ Thay text cứng `View All 2024` trong section Featured Collections bằng năm 
 ### Commit message đề xuất
 
 `chore(home): use current year in featured collections view-all button`
+
+---
+
+## Task: Sửa lỗi upload multiple ảnh chỉ lưu ảnh cuối
+
+### Ngày: 2026-04-10 23:05:00 +07:00
+
+### Mô tả công việc
+- Khắc phục lỗi trong `product-form` khi upload nhiều ảnh: chỉ ảnh cuối được thêm vào danh sách ảnh sản phẩm.
+
+### Công việc đã làm
+- Sửa `src/components/ui/dropzone.tsx`:
+  - Dùng biến cộng dồn `nextUrls` trong `handleFiles` để lưu đầy đủ tất cả ảnh upload thành công.
+  - Refactor `uploadFile` trả về URL ảnh mới (`string | null`) thay vì tự cập nhật danh sách ảnh bằng `value` cũ.
+  - Di chuyển cập nhật `onChange`/`onFeaturedChange` sang `handleFiles` để tránh ghi đè state khi upload nhiều file liên tiếp.
+
+### Kiểm tra
+- `npx eslint "src/components/ui/dropzone.tsx"`: pass
+- `$env:SKIP_TYPECHECK='true'; npx next build`: pass
+
+### Commit message đề xuất
+`fix(dropzone): preserve all uploaded images when uploading multiple files`
+
+---
+
+## Task: Hero section bỏ cột phải và border ngăn giữa
+
+### Ngày: 2026-04-10 23:12:00 +07:00
+
+### Mô tả công việc
+- Cập nhật `hero-section` để bỏ cột ảnh bên phải và xóa border ngăn giữa 2 phần.
+
+### Công việc đã làm
+- Sửa `src/components/client/home/hero-section.tsx`:
+  - Xóa cột bên phải chứa ảnh hero.
+  - Xóa import `next/image` không còn dùng.
+  - Bỏ `md:flex-row` để section không chia 2 cột.
+  - Bỏ `md:border-r-2` để xóa đường ngăn giữa.
+
+### Kiểm tra
+- `npx eslint "src/components/client/home/hero-section.tsx"`: pass
+- `$env:SKIP_TYPECHECK='true'; npx next build`: pass
+
+### Commit message đề xuất
+`refactor(hero-section): remove right column and divider border`
+
+---
+
+## Task: Thêm ảnh hero ở góc dưới bên phải (responsive)
+
+### Ngày: 2026-04-10 23:20:00 +07:00
+
+### Mô tả công việc
+- Đặt ảnh hero từ URL cung cấp vào góc dưới bên phải của `hero-section` và đảm bảo responsive.
+
+### Công việc đã làm
+- Sửa `src/components/client/home/hero-section.tsx`:
+  - Thêm `Image` (`next/image`) cho ảnh mới.
+  - Thêm block `absolute` ở `bottom-right` với width responsive (`w-40` -> `w-64` theo breakpoint).
+  - Dùng `pointer-events-none` để ảnh không ảnh hưởng thao tác click.
+  - Tăng `padding-bottom` nội dung để tránh text đè lên ảnh trên màn hình nhỏ.
+
+### Kiểm tra
+- `npx eslint "src/components/client/home/hero-section.tsx"`: pass
+- `$env:SKIP_TYPECHECK='true'; npx next build`: pass
+
+### Commit message đề xuất
+`feat(hero-section): add responsive bottom-right hero image`
+
+---
+
+## Task: Thay ảnh bằng video bên phải có khung vintage
+
+### Ngày: 2026-04-10 23:31:00 +07:00
+
+### Mô tả công việc
+- Xóa ảnh hero và thay bằng video `hero_video.mp4` đặt giữa bên phải với khung vintage, đảm bảo bố cục hài hòa.
+
+### Công việc đã làm
+- Sửa `src/components/client/home/hero-section.tsx`:
+  - Xóa block ảnh và bỏ import `next/image`.
+  - Thêm block video `absolute` ở giữa bên phải, có width responsive (`w-44` -> `w-72`).
+  - Dùng video local `/videos/hero_video.mp4` với `autoPlay`, `loop`, `muted`, `playsInline`.
+  - Thêm khung vintage nhiều lớp border + nền + nhãn `Archive Reel`.
+  - Tăng `md:pr-*` và `pb-*` cho content để không đè lên video.
+
+### Kiểm tra
+- `npx eslint "src/components/client/home/hero-section.tsx"`: pass
+- `$env:SKIP_TYPECHECK='true'; npx next build`: pass
+
+### Commit message đề xuất
+`feat(hero-section): replace decorative image with framed responsive hero video`
+
+---
+
+## Task: Tăng kích thước video chiếm nửa hero section
+
+### Ngày: 2026-04-10 23:50:00 +07:00
+
+### Mô tả công việc
+- Điều chỉnh video trong `hero-section` để chiếm khoảng một nửa chiều ngang section và giữ bố cục hài hòa với phần text.
+
+### Công việc đã làm
+- Sửa `src/components/client/home/hero-section.tsx`:
+  - Tăng kích thước video: `md:w-[48%]`, `lg:w-[46%]`.
+  - Tăng size trên mobile: `w-56`, `sm:w-64`.
+  - Tăng `md:pr-[52%]` cho khối nội dung để tránh đè lên video.
+  - Giữ nguyên khung vintage và vị trí ở giữa bên phải.
+
+### Kiểm tra
+- `npx eslint "src/components/client/home/hero-section.tsx"`: pass
+- `$env:SKIP_TYPECHECK='true'; npx next build`: pass
+
+### Commit message đề xuất
+`style(hero-section): enlarge framed video to half-width on desktop`
+
+---
+
+## Task: Chuẩn hóa nơi lưu task log (chỉ cursor_log.md)
+
+### Ngày: 2026-04-11
+
+### Mô tả công việc
+- Di chuyển log còn lại trong `cursor.md` sang `cursor_log.md`; xác nhận `cursor_log.md` là file log task chính.
+
+### Công việc đã làm
+- Append task "Tăng kích thước video chiếm nửa hero section" vào cuối `cursor_log.md` (trước đó chỉ nằm trong `cursor.md`).
+- Thay nội dung `cursor.md` bằng ghi chú trỏ tới `cursor_log.md`.
+
+### Commit message đề xuất
+`docs: consolidate task logs in cursor_log.md`

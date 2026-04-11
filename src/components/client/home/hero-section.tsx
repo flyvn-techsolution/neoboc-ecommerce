@@ -1,9 +1,7 @@
-import Image from "next/image";
-
 export function HeroSection() {
   return (
-    <section className="relative flex min-h-[921px] flex-col items-stretch border-b-2 border-[#1d1b18] md:flex-row">
-      <div className="flex flex-1 flex-col justify-center border-[#1d1b18] bg-[#fef9f3] p-8 md:border-r-2 md:p-16">
+    <section className="relative flex min-h-[921px] flex-col items-stretch border-b-2 border-[#1d1b18]">
+      <div className="flex flex-1 flex-col justify-center bg-[#fef9f3] p-8 pb-[22rem] md:p-16 md:pb-16 md:pr-[52%]">
         <div className="max-w-xl space-y-6">
           <span className="text-xs font-bold uppercase tracking-widest text-[#a43716]">
             Apothecary of Expression
@@ -25,13 +23,26 @@ export function HeroSection() {
           </div>
         </div>
       </div>
-      <div className="relative min-h-[500px] flex-1 overflow-hidden bg-[#e6e2dc]">
-        <Image
-          alt="Luxury Nail Set Hero"
-          className="absolute inset-0 h-full w-full object-cover grayscale-[0.2] transition-transform duration-700 hover:scale-105"
-          src="https://lh3.googleusercontent.com/aida-public/AB6AXuCTiX2TldfQVAtzm4Uo8cbb91MagU4w2iLI7kU-Q0FKuZmxN3I6BT_RRbdeVcvcU1NSEsiNJ65yAyAn94FIoCvAIqboDsXaQinCR44CWhXY0PGq9aVwZQQfSanRV9ciiZq0U4E0DdEeCxgqYWVh9UdJ67DQuz_roHMFzItcmZan_dGugbZjcBbN7P1tJeg4cX5h2oipArhBdJKSPh_prTpoj-pDxhvvxJIeVAq-o1AA5OfKt0MG-d5sQjUmYA09d2fqK7SamT7xDoyL"
-          fill
-        />
+      <div className="pointer-events-none absolute right-3 top-[62%] z-10 w-56 -translate-y-1/2 sm:right-6 sm:top-1/2 sm:w-64 md:right-8 md:w-[48%] lg:right-12 lg:w-[46%]">
+        <div className="relative border-2 border-[#1d1b18] bg-[#efe4d2] p-2 shadow-[8px_8px_0px_0px_rgba(29,27,24,1)]">
+          <div className="border border-[#6b584e] bg-[#d4c0a7] p-1">
+            <div className="overflow-hidden border border-[#1d1b18] bg-black">
+              <video
+                src="/videos/hero_video.mp4"
+                className="h-auto w-full object-cover"
+                autoPlay
+                loop
+                muted
+                playsInline
+                preload="metadata"
+              />
+            </div>
+          </div>
+          <span className="absolute -bottom-3 left-1/2 -translate-x-1/2 bg-[#fef9f3] px-3 py-0.5 text-[10px] font-semibold uppercase tracking-[0.2em] text-[#6b584e]">
+            Archive Reel
+          </span>
+          <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(255,255,255,0.25),transparent_50%)]" />
+        </div>
       </div>
     </section>
   );

@@ -888,3 +888,147 @@ feat(product-form): add variant image picker modal with choose/replace/remove fl
 
 ### Commit message đề xuất
 `feat(client-home): add shop layout and split homepage into reusable components`
+
+---
+
+## Task: Sửa lỗi upload multiple ảnh chỉ lưu ảnh cuối
+
+### Ngày: 2026-04-10 23:05:00 +07:00
+
+### Mô tả công việc:
+
+Khắc phục lỗi ở `product-form` khi upload nhiều ảnh cùng lúc: tất cả file đều upload thành công nhưng danh sách ảnh sản phẩm chỉ giữ lại ảnh cuối cùng.
+
+### Công việc đã làm:
+
+- Cập nhật `src/components/ui/dropzone.tsx`:
+  - Sửa logic trong `handleFiles` để cộng dồn URL ảnh theo biến cục bộ `nextUrls` thay vì dựa vào prop `value` cũ ở mỗi vòng upload.
+  - Đổi `uploadFile` để trả về `newUrl` (hoặc `null` nếu lỗi), tách phần upload khỏi phần merge state danh sách ảnh.
+  - Di chuyển `onChange` và `onFeaturedChange` về `handleFiles` để đảm bảo cập nhật theo thứ tự upload và không bị ghi đè ảnh trước đó.
+  - Giữ nguyên xử lý progress/error cho từng ảnh.
+
+### Kiểm tra:
+
+- `npx eslint "src/components/ui/dropzone.tsx"`: pass.
+- `$env:SKIP_TYPECHECK='true'; npx next build`: pass.
+
+### Commit message đề xuất
+
+`fix(dropzone): preserve all uploaded images when uploading multiple files`
+
+---
+
+## Task: Hero section bỏ cột phải và border ngăn giữa
+
+### Ngày: 2026-04-10 23:12:00 +07:00
+
+### Mô tả công việc:
+
+Cập nhật `hero-section` để chỉ còn một cột nội dung bên trái, đồng thời xóa đường border ngăn giữa 2 cột.
+
+### Công việc đã làm:
+
+- Cập nhật `src/components/client/home/hero-section.tsx`:
+  - Xóa toàn bộ cột phải chứa ảnh hero.
+  - Xóa import `next/image` không còn sử dụng.
+  - Bỏ class `md:flex-row` ở section để không chia 2 cột nữa.
+  - Bỏ class `md:border-r-2` tại cột nội dung để xóa border ngăn giữa.
+
+### Kiểm tra:
+
+- `npx eslint "src/components/client/home/hero-section.tsx"`: pass.
+- `$env:SKIP_TYPECHECK='true'; npx next build`: pass.
+
+### Commit message đề xuất
+
+`refactor(hero-section): remove right column and divider border`
+
+---
+
+## Task: Thêm ảnh hero ở góc dưới bên phải (responsive)
+
+### Ngày: 2026-04-10 23:20:00 +07:00
+
+### Mô tả công việc:
+
+Đặt ảnh từ URL được cung cấp vào góc dưới bên phải của `hero-section`, đảm bảo hiển thị tốt trên các kích thước màn hình.
+
+### Công việc đã làm:
+
+- Cập nhật `src/components/client/home/hero-section.tsx`:
+  - Thêm `Image` từ `next/image`.
+  - Thêm khối ảnh `absolute` ở `bottom-right` với kích thước responsive:
+    - Mobile: `w-40`
+    - Small: `w-48`
+    - Medium: `w-56`
+    - Large: `w-64`
+  - Thêm `pointer-events-none` cho ảnh để không chặn thao tác UI.
+  - Tăng `padding-bottom` phần nội dung (`pb-48`, `md:pb-24`) để tránh chồng lấn chữ trên mobile.
+
+### Kiểm tra:
+
+- `npx eslint "src/components/client/home/hero-section.tsx"`: pass.
+- `$env:SKIP_TYPECHECK='true'; npx next build`: pass.
+
+### Commit message đề xuất
+
+`feat(hero-section): add responsive bottom-right hero image`
+
+---
+
+## Task: Thay ảnh bằng video bên phải có khung vintage
+
+### Ngày: 2026-04-10 23:31:00 +07:00
+
+### Mô tả công việc:
+
+Xóa ảnh trang trí ở hero section, thay bằng video `public/videos/hero_video.mp4` đặt ở giữa bên phải, kèm khung vintage và tỷ lệ hiển thị hài hòa với block nội dung.
+
+### Công việc đã làm:
+
+- Cập nhật `src/components/client/home/hero-section.tsx`:
+  - Xóa ảnh cũ và import `Image`.
+  - Thêm block video `absolute` ở giữa bên phải (`top-1/2`, `-translate-y-1/2`) với kích thước responsive (`w-44` đến `w-72`).
+  - Dùng `<video src="/videos/hero_video.mp4" autoPlay loop muted playsInline preload="metadata" />`.
+  - Thiết kế khung vintage nhiều lớp (border, nền giấy, nhãn `Archive Reel`, highlight overlay) để phù hợp style tổng thể.
+  - Tăng `padding-right` trên desktop và `padding-bottom` trên mobile cho phần content để tránh chồng lấn với video.
+
+### Kiểm tra:
+
+- `npx eslint "src/components/client/home/hero-section.tsx"`: pass.
+- `$env:SKIP_TYPECHECK='true'; npx next build`: pass.
+
+### Commit message đề xuất
+
+`feat(hero-section): replace decorative image with framed responsive hero video`
+
+---
+
+## Task: Tăng kích thước video chiếm nửa hero section
+
+### Ngày: 2026-04-10 23:50:00 +07:00
+
+### Mô tả công việc:
+
+Điều chỉnh lại kích thước và vị trí video trong `hero-section` để video lớn hơn, chiếm khoảng một nửa chiều ngang hero section trên desktop, đồng thời giữ bố cục cân đối với phần text.
+
+### Công việc đã làm:
+
+- Cập nhật `src/components/client/home/hero-section.tsx`:
+  - Tăng chiều rộng video:
+    - `md:w-[48%]`
+    - `lg:w-[46%]`
+  - Tăng kích thước video ở mobile:
+    - `w-56` (base), `sm:w-64`
+  - Điều chỉnh khoảng trống phần nội dung để không đè vào video:
+    - `md:pr-[52%]`
+  - Giữ nguyên style khung vintage và vị trí giữa bên phải.
+
+### Kiểm tra:
+
+- `npx eslint "src/components/client/home/hero-section.tsx"`: pass.
+- `$env:SKIP_TYPECHECK='true'; npx next build`: pass.
+
+### Commit message đề xuất
+
+`style(hero-section): enlarge framed video to half-width on desktop`
