@@ -1297,3 +1297,152 @@ Thay text cứng `View All 2024` trong section Featured Collections bằng năm 
 
 ### Commit message đề xuất
 `docs: consolidate task logs in cursor_log.md`
+
+---
+
+## Task: Thay video trong khung vintage TV bằng ảnh tĩnh
+
+### Ngày: 2026-04-11
+
+### Mô tả công việc
+- Xóa video `<video>` trong khung vintage TV của hero-section và thay bằng ảnh tĩnh `vintage-tv.webp`.
+
+### Công việc đã làm
+- Sửa `src/components/client/home/hero-section.tsx`:
+  - Thêm import `Image` từ `next/image`.
+  - Thay thế `<video>` bằng `<Image>` với `src="/images/vintage-tv.webp"`, `width={800}`, `height={600}`.
+  - Giữ nguyên layout, border, shadow, nhãn "Archive Reel" của khung vintage.
+
+### Kiểm tra
+- Build thất bại do Google Fonts không kết nối được mạng (lỗi tồn đọng, không liên quan đến thay đổi).
+- File `hero-section.tsx` đã sửa đúng cú pháp và import.
+
+### Commit message đề xuất
+
+`refactor(hero): replace video with static vintage-tv.webp image in framed display`
+
+---
+
+## Task: Đặt video vào trong khung TV, xóa viền ngoài
+
+### Ngày: 2026-04-11
+
+### Mô tả công việc
+- Xóa các border viền ngoài của khung vintage TV, chỉ giữ lại hình ảnh TV và đặt video bên trong màn hình TV.
+
+### Công việc đã làm
+- Sửa `src/components/client/home/hero-section.tsx`:
+  - Xóa các lớp viền ngoài: `border-2`, `shadow`, nhãn "Archive Reel", gradient overlay.
+  - Giữ nguyên ảnh `vintage-tv.webp` làm khung TV.
+  - Thêm `div` overlay chứa `<video>` với `position: absolute` đặt đúng vị trí màn hình TV (top: 12%, left: 8%, width: 84%, height: 68%).
+
+### Kiểm tra
+- `npm run build`: pass.
+
+### Commit message đề xuất
+
+`refactor(hero): place video inside vintage-tv frame, remove outer borders`
+
+---
+
+## Task: Đặt video đằng sau khung TV, resize và căn giữa
+
+### Ngày: 2026-04-11
+
+### Mô tả công việc
+- Đặt video đằng sau khung TV (dùng z-index), resize video bằng 90% kích thước TV và căn giữa để khung TV che phần thừa.
+
+### Công việc đã làm
+- Sửa `src/components/client/home/hero-section.tsx`:
+  - Đặt `<video>` trước `<Image>` trong DOM (video sẽ nằm đằng sau).
+  - Bọc video trong div với `w-[90%] h-[90%] m-auto` để resize 90% và căn giữa.
+  - Đặt `<Image>` (khung TV) sau video với `absolute inset-0` để phủ lên trên.
+
+### Kiểm tra
+- Build lỗi do Google Fonts không kết nối được (lỗi tồn đọng, không liên quan đến thay đổi).
+
+### Commit message đề xuất
+
+`refactor(hero): layer video behind tv frame at 90% size, centered`
+
+---
+
+## Task: Scale video 90% khung TV với tỉ lệ gốc
+
+### Ngày: 2026-04-11
+
+### Mô tả công việc
+- Giữ nguyên kích thước tỉ lệ của TV, scale video xuống 90% để lọt vào trong khung.
+
+### Công việc đã làm
+- Sửa `src/components/client/home/hero-section.tsx`:
+  - Thêm div wrapper với flexbox để căn giữa.
+  - Đổi `object-cover` thành `object-contain` để giữ tỉ lệ gốc của video.
+  - Scale video xuống `h-[90%] w-[90%]` để video nhỏ hơn khung TV.
+
+### Commit message đề xuất
+
+`refactor(hero): scale video to 90% with object-contain to fit inside tv frame`
+
+---
+
+## Task: Đặt video và khung TV cùng container với position absolute
+
+### Ngày: 2026-04-11
+
+### Mô tả công việc
+- Đặt video và khung TV vào cùng 1 div container, dùng position absolute cho cả 2, container là relative.
+
+### Công việc đã làm
+- Sửa `src/components/client/home/hero-section.tsx`:
+  - Container div với `relative h-auto w-full`.
+  - Video div với `absolute inset-0`, video bên trong với `h-full w-full object-contain`.
+  - Image với `relative z-10 h-auto w-full`, z-index cao hơn video để nằm trên.
+
+### Commit message đề xuất
+
+`refactor(hero): use single container with absolute positioning for video and tv frame`
+
+---
+
+## Task: Đặt tỉ lệ video 4:3
+
+### Ngày: 2026-04-11
+
+### Mô tả công việc
+- Đặt video có tỉ lệ 4:3 để phù hợp với màn hình TV vintage.
+
+### Công việc đã làm
+- Sửa `src/components/client/home/hero-section.tsx`:
+  - Thêm div wrapper với flexbox căn giữa.
+  - Video dùng `aspect-[4/3]` để set tỉ lệ 4:3.
+  - Dùng `h-auto w-auto max-h-full max-w-full` để video scale đúng tỉ lệ và không tràn.
+
+### Commit message đề xuất
+
+`refactor(hero): set video aspect ratio to 4:3 for tv screen fit`
+
+---
+
+## Task: Hiển thị 4 sản phẩm ngẫu nhiên trong phần best sellers
+
+### Ngày: 2026-04-11
+
+### Mô tả công việc
+- Thay thế dữ liệu tĩnh trong BestsellersSection bằng 4 sản phẩm ngẫu nhiên từ database.
+
+### Công việc đã làm
+- Tạo `src/lib/actions/product-actions.ts` với function `getRandomProducts()` sử dụng trực tiếp Prisma.
+- Cập nhật `src/components/client/home/bestsellers-section.tsx`:
+  - Convert thành async server component.
+  - Fetch 4 sản phẩm ngẫu nhiên từ database.
+  - Sử dụng `featuredImage` hoặc `images[0]` cho ảnh sản phẩm.
+  - Format giá tiền với `toFixed(2)`.
+
+### Kiểm tra
+- `npm run build`: pass.
+
+### Commit message đề xuất
+
+`feat(bestsellers): fetch 4 random products from database`
+

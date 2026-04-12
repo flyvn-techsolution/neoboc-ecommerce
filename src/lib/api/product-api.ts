@@ -62,6 +62,13 @@ export async function fetchProducts(
   return handleResponse<ProductsResponse>(response);
 }
 
+export async function fetchRandomProducts(
+  limit: number = 4
+): Promise<{ data: Product[] }> {
+  const response = await fetch(`${API_BASE}/products/random?limit=${limit}`);
+  return handleResponse<{ data: Product[] }>(response);
+}
+
 export async function fetchProduct(id: string): Promise<Product> {
   const response = await fetch(`${API_BASE}/products/${id}`);
   return handleResponse<Product>(response);
